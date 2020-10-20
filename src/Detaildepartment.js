@@ -1,4 +1,5 @@
 import React from "react";
+import Navigation from "./Nav";
 //import ReactDOM from 'react-dom';
 import "./dashboard/dashboard.css";
 //import nerology from './img/Nerology.png';
@@ -8,6 +9,8 @@ import "./dashboard/dashboard.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
+
+ const BASE = "https://stage.mconnecthealth.com";
 
 class Detaildepartment extends React.Component {
   constructor(props) {
@@ -35,7 +38,7 @@ class Detaildepartment extends React.Component {
     //  axios.get('/v1/admin/hospitals/'+`?hospitalcode=${this.props.match.params.id}&doctorName=Sanjeev`,
     axios
       .get(
-        "http://localhost:4300/v1/hospital/departments/" +
+        "https://stage.mconnecthealth.com/v1/hospital/departments/" +
           this.props.match.params.id,
         {
           headers: {
@@ -43,7 +46,7 @@ class Detaildepartment extends React.Component {
           },
         }
       )
-      // axios.get('http://localhost:4300/saket_Hospital')
+      // axios.get('https://stage.mconnecthealth.com/saket_Hospital')
       .then((response) => {
         console.log(response);
         const data = response.data.data;
@@ -60,7 +63,7 @@ class Detaildepartment extends React.Component {
 
     //console.log(`${this.state.post._id} this is department id`)
     axios({
-      url: `http://localhost:4300/v1/hospital/departments/${this.state.post._id}`,
+      url: `https://stage.mconnecthealth.com/v1/hospital/departments/${this.state.post._id}`,
       method: "delete",
       headers: {
         Authorization: localStorage.getItem("token"),
@@ -82,7 +85,7 @@ class Detaildepartment extends React.Component {
   // DeleteDept = () => {
   // 	console.log("delete initiated")
   // 	axios({
-  // 		url: `http://localhost:4300/v1/hospital/departments/${this.state.id}`,
+  // 		url: `https://stage.mconnecthealth.com/v1/hospital/departments/${this.state.id}`,
   // 		method: 'Delete',
   // 		headers: {
   // 			'Authorization': localStorage.getItem("token")
@@ -105,32 +108,35 @@ class Detaildepartment extends React.Component {
     const { post } = this.state;
 
     if (this.state.loggedIn === false) {
-      return <Redirect to="/splash" />;
+      return <Redirect to="/" />;
     }
     return (
-      <div className="detailsdept">
-        <div className="backarrow">
-          {" "}
-          <Link to="/Alldepartment">
-            <i className="fas fa-arrow-left"></i>
-          </Link>
-        </div>
-        <h2>Department Details</h2>
+      <div className="Appcontainer">
+        <Navigation />
+        <div className="detailsdept">
+          <div className="backarrow">
+            {" "}
+            <Link to="/Alldepartment">
+              <i className="fas fa-arrow-left"></i>
+            </Link>
+          </div>
+          <h2>Department Details</h2>
 
-        <img src={post.picture} alt="Neorology" />
-        <h3>{post.departmentname}</h3>
-        <p>{post.deptcode}</p>
-        <div className="detlspage">
-          <p>{post.description}</p>
-        </div>
-        <Link to={"/Editdepartment/" + post._id}>
-          <button>
-            <i className="far fa-edit"></i>Edit{" "}
+          <img src={post.picture} alt="Neorology" />
+          <h3>{post.departmentname}</h3>
+          {/* <p>{post.deptcode}</p> */}
+          <div className="detlspage">
+            <p>{post.description}</p>
+          </div>
+          <Link to={"/Editdepartment/" + post._id}>
+            <button>
+              <i className="far fa-edit"></i>Edit{" "}
+            </button>
+          </Link>
+          <button onClick={this.DeleteDept}>
+            <i className="fas fa-trash"></i>Delete Department{" "}
           </button>
-        </Link>
-        <button onClick={this.DeleteDept}>
-          <i className="fas fa-trash"></i>Delete Department{" "}
-        </button>
+        </div>
       </div>
     );
   }

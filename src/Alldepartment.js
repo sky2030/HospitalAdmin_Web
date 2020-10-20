@@ -1,12 +1,16 @@
 import React from "react";
+import Navigation from "./Nav";
 //import ReactDOM from 'react-dom';
 import "./dashboard/dashboard.css";
-//import nerology from './img/Nerology.png';
-//import dentist1 from './img/dentist1.png';
-//import cardio from './img/cardio.png';
+//import Spinner from "./img/Spinner.gif";
+import Spinner from "./img/Spinnergrey.gif";
+//import Spinner from "./img/Magnify.gif";
 import addicon from "./img/add.png";
 import { Link, Redirect } from "react-router-dom";
 import axios from "axios";
+
+ const BASE = "https://stage.mconnecthealth.com";
+
 
 class Alldepartment extends React.Component {
   constructor(props) {
@@ -30,7 +34,7 @@ class Alldepartment extends React.Component {
     console.log("Data has been received!!");
     axios
       .get(
-        "http://localhost:4300/v1/hospital/departments",
+        "https://stage.mconnecthealth.com/v1/hospital/departments",
 
         {
           headers: {
@@ -51,7 +55,7 @@ class Alldepartment extends React.Component {
   };
   render() {
     if (localStorage.getItem("token") == null) {
-      return <Redirect to="/splash" />;
+      return <Redirect to="/" />;
     }
     const { posts } = this.state;
 
@@ -64,7 +68,7 @@ class Alldepartment extends React.Component {
                 <Link to={"/Detaildepartment/" + post._id}>
                   <img
                     src={post.picture === "" ? addicon : post.picture}
-                    alt="Neorology"
+                    alt="Department"
                   />
                   {post.departmentname}
                 </Link>
@@ -74,24 +78,35 @@ class Alldepartment extends React.Component {
         );
       })
     ) : (
-      <div className="center">No Posts to show</div>
+      <div
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "150px",
+          marginBottom: "100px",
+        }}
+      >
+        <img src={Spinner} alt="Loading" />
+      </div>
     );
 
     return (
-      <div className="alldept">
-        <div className="backarrow">
-          <Link to="/Dashboard">
-            <i className="fas fa-arrow-left"></i>
-          </Link>{" "}
-        </div>
-        <h2>All Department</h2>
+      <div className="Appcontainer">
+        <Navigation />
+        <div className="alldept">
+          <div className="backarrow">
+            <Link to="/Dashboard">
+              <i className="fas fa-arrow-left"></i>
+            </Link>{" "}
+          </div>
+          <h2>All Department</h2>
 
-        {postList}
-        <div className="add_departmet">
-          <Link to="/Adddepartment">
-            {" "}
-            <i className="fas fa-plus"></i> Add Department
-          </Link>
+          {postList}
+          <div className="add_departmet">
+            <Link to="/Adddepartment">
+              <i className="fas fa-plus"></i> Add Department
+            </Link>
+          </div>
         </div>
       </div>
     );

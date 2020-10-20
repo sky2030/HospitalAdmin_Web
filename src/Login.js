@@ -2,6 +2,7 @@ import React from "react";
 // import ReactDOM from 'react-dom';
 import "./dashboard/dashboard.css";
 import axios from "axios";
+import logo from "./img/logo.png";
 import { Redirect } from "react-router-dom";
 
 class Login extends React.Component {
@@ -58,7 +59,7 @@ class Login extends React.Component {
       };
 
       axios({
-        url: "http://localhost:4300/v1/hospital/login",
+        url: "https://stage.mconnecthealth.com/v1/hospital/login",
         method: "POST",
         data: payload,
       })
@@ -105,7 +106,8 @@ class Login extends React.Component {
 
     return (
       <section className="login">
-        <h2>WELCOME TO VR Cure!</h2>
+        <img src={logo} alt="logo" />
+        <h2>WELCOME TO VRCure!</h2>
         <form autocomplete="off" onSubmit={this.submitForm}>
           <div className="loginbox">
             <i className="fas fa-user"></i>
@@ -143,7 +145,8 @@ class Login extends React.Component {
             </a>
           </div>
           <div>
-            <input type="submit" className="button" />
+            {/* <input type="submit" className="button" /> */}
+            <button type="submit">Login</button>
           </div>
         </form>
       </section>

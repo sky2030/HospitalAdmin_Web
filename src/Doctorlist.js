@@ -1,10 +1,17 @@
 import React from "react";
+import Navigation from "./Nav";
 // import ReactDOM from 'react-dom';
 import "./dashboard/dashboard.css";
 import { Link, Redirect } from "react-router-dom";
 import docicon from "./img/doctor-icon.jpg";
 import axios from "axios";
+//import Spinner from "./img/Magnify.gif";
+import Spinner from "./img/Spinnergrey.gif";
+//import Spinner from "./img/Spinner.gif";
 // import Adddoctor from './Adddoctor';
+
+ const BASE = "https://stage.mconnecthealth.com";
+
 
 class Doctorlist extends React.Component {
   constructor(props) {
@@ -28,7 +35,7 @@ class Doctorlist extends React.Component {
     console.log("Data has been received!!");
     axios
       .get(
-        "http://localhost:4300/v1/hospital/doctors",
+        "https://stage.mconnecthealth.com/v1/hospital/doctors",
 
         {
           headers: {
@@ -84,19 +91,31 @@ class Doctorlist extends React.Component {
         );
       })
     ) : (
-        <div className="center">No posts to show</div>
-      );
+      <div
+        className="center"
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "50px",
+        }}
+      >
+        <img src={Spinner} alt="Loading" />
+      </div>
+    );
 
     if (this.state.loggedIn === false) {
-      return <Redirect to="/splash" />;
+      return <Redirect to="/" />;
     }
     return (
-      <div className="dashboard_wrap">
-        <div className="flex-container">{postList}</div>
-        <div className="add_departmet">
-          <Link to="/Adddoctor">
-            <i className="fas fa-plus"></i> Add Doctor{" "}
-          </Link>
+      <div className="Appcontainer">
+        <Navigation />
+        <div className="dashboard_wrap">
+          <div className="flex-container">{postList}</div>
+          <div className="add_departmet">
+            <Link to="/Adddoctor">
+              <i className="fas fa-plus"></i> Add Doctor{" "}
+            </Link>
+          </div>
         </div>
       </div>
     );

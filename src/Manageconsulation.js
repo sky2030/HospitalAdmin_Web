@@ -1,11 +1,12 @@
 import React from "react";
+import Navigation from "./Nav";
 import "./dashboard/dashboard.css";
-import { Link, Redirect } from "react-router-dom";
-import axios from "axios";
+import { Link } from "react-router-dom";
 import "rc-time-picker/assets/index.css";
 //import TimePicker from "react-time-picker";
 import TimePicker from "rc-time-picker";
 import moment from "moment-timezone";
+import { Redirect } from "react-router-dom";
 
 const now = moment().hour(0).minute(0);
 
@@ -37,29 +38,6 @@ class Manageconsulation extends React.Component {
     console.log(`This is Doctor ID ${this.props.match.params.id}`);
     // this.getDoctor();
   };
-
-  //   getDoctor = () => {
-  //     //  axios.get('/v1/admin/hospitals/'+`?hospitalcode=${this.props.match.params.id}&doctorName=Sanjeev`,
-  //     axios
-  //       .get(
-  //         `http://localhost:4300/v1/hospital/doctors/` +
-  //           this.props.match.params.id,
-  //         {
-  //           headers: {
-  //             Authorization: localStorage.getItem("token"),
-  //           },
-  //         }
-  //       )
-  //       .then((response) => {
-  //         console.log(response);
-  //         const data = response.data.data;
-  //         this.setState({ post: data });
-  //         console.log("Data has been received!!");
-  //       })
-  //       .catch(() => {
-  //         alert("Error retrieving data!!");
-  //       });
-  //   };
 
   handleChange = ({ target }) => {
     const { name, value } = target;
@@ -122,15 +100,7 @@ class Manageconsulation extends React.Component {
 
   updateDetails = (event) => {
     event.preventDefault();
-    const {
-      dayfrom,
-      dayto,
-      startTime,
-      endTime,
-      duration,
-      days,
-      d_id,
-    } = this.state;
+    const { dayfrom, dayto, startTime, endTime, duration, d_id } = this.state;
     if (dayfrom < 0) {
       alert("Select Days from");
       return;
@@ -172,14 +142,17 @@ class Manageconsulation extends React.Component {
 
     console.log(payload, d_id);
 
-    fetch(`http://localhost:4300/v1/hospital/doctors/${d_id}/slots`, {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("token"),
-      },
-      body: JSON.stringify(payload),
-    })
+    fetch(
+      `https://stage.mconnecthealth.com/v1/hospital/doctors/${d_id}/slots`,
+      {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("token"),
+        },
+        body: JSON.stringify(payload),
+      }
+    )
       .then((res) => res.json())
       .then((data) => {
         if (data.code === 200) {
@@ -233,66 +206,70 @@ class Manageconsulation extends React.Component {
   // 	return returnValue;
   // };
   render() {
-    const { dayfrom, dayto, startTime, endTime, duration, days } = this.state;
+    if (this.state.submitted) {
+      return <Redirect to="/Doctorlist" />;
+    }
     return (
-      <div className="adddept">
-        <div className="backarrow">
-          {" "}
-          <Link to="/Doctorlist">
-            <i className="fas fa-arrow-left"></i>
-          </Link>
-        </div>
-        <h2>Manage Consultation</h2>
-        <form onSubmit={this.updateDetails}>
-          <div className="row">
-            <select onChange={this.handleDayfrom}>
-              <option>Day From</option>
-              <option value={0}>Sunday</option>
-              <option value={1}>Monday</option>
-              <option value={2}>Tuesday</option>
-              <option value={3}>Wednesday</option>
-              <option value={4}>Thursday</option>
-              <option value={5}>Friday</option>
-              <option value={6}>Saturday</option>
-            </select>
+      <div className="Appcontainer">
+        <Navigation />
+        <div className="adddept">
+          <div className="backarrow">
+            {" "}
+            <Link to="/Doctorlist">
+              <i className="fas fa-arrow-left"></i>
+            </Link>
           </div>
-          <div className="row">
-            <select onChange={this.handleDayto}>
-              <option>Day To</option>
-              <option value={0}>Sunday</option>
-              <option value={1}>Monday</option>
-              <option value={2}>Tuesday</option>
-              <option value={3}>Wednesday</option>
-              <option value={4}>Thursday</option>
-              <option value={5}>Friday</option>
-              <option value={6}>Saturday</option>
-            </select>
-          </div>
-          <div className="row">
-            <div className="timerow">
-              <h5>Start Time </h5>
-              <TimePicker
-                showSecond={false}
-                defaultValue={now}
-                className="xxx"
-                onChange={this.onChange}
-                format={format}
-                use12Hours
-                inputReadOnly
-              />
-              <h5>End Time </h5>
-              <TimePicker
-                showSecond={false}
-                defaultValue={now}
-                className="xxx"
-                onChange={this.EndTimeChange}
-                format={format}
-                use12Hours
-                inputReadOnly
-              />
+          <h2>Manage Consultation</h2>
+          <form onSubmit={this.updateDetails}>
+            <div className="row">
+              <select onChange={this.handleDayfrom}>
+                <option>Day From</option>
+                <option value={0}>Sunday</option>
+                <option value={1}>Monday</option>
+                <option value={2}>Tuesday</option>
+                <option value={3}>Wednesday</option>
+                <option value={4}>Thursday</option>
+                <option value={5}>Friday</option>
+                <option value={6}>Saturday</option>
+              </select>
             </div>
+            <div className="row">
+              <select onChange={this.handleDayto}>
+                <option>Day To</option>
+                <option value={0}>Sunday</option>
+                <option value={1}>Monday</option>
+                <option value={2}>Tuesday</option>
+                <option value={3}>Wednesday</option>
+                <option value={4}>Thursday</option>
+                <option value={5}>Friday</option>
+                <option value={6}>Saturday</option>
+              </select>
+            </div>
+            <div className="row">
+              <div className="timerow">
+                <h5>Start Time </h5>
+                <TimePicker
+                  showSecond={false}
+                  defaultValue={now}
+                  className="xxx"
+                  onChange={this.onChange}
+                  format={format}
+                  use12Hours
+                  inputReadOnly
+                />
+                <h5>End Time </h5>
+                <TimePicker
+                  showSecond={false}
+                  defaultValue={now}
+                  className="xxx"
+                  onChange={this.EndTimeChange}
+                  format={format}
+                  use12Hours
+                  inputReadOnly
+                />
+              </div>
 
-            {/* <select>
+              {/* <select>
               <option>Start Time</option>
               <option>09:00 AM</option>
               <option>10:00 AM</option>
@@ -303,8 +280,8 @@ class Manageconsulation extends React.Component {
               <option>03:00 PM</option>
               <option>04:00 PM</option>
             </select> */}
-          </div>
-          {/* <div className="row">
+            </div>
+            {/* <div className="row">
             <select>
               <option>End Time</option>
               <option>10:00 AM</option>
@@ -318,42 +295,43 @@ class Manageconsulation extends React.Component {
               <option>06:00 PM</option>
             </select>
           </div> */}
-          <div className="row">
-            <select onChange={this.handleDuration}>
-              <option>Slot Duration</option>
-              <option value={10}>10</option>
-              <option value={15}>15</option>
-              <option value={20}>20</option>
-              <option value={30}>30</option>
-            </select>
-          </div>
+            <div className="row">
+              <select onChange={this.handleDuration}>
+                <option>Slot Duration</option>
+                <option value={10}>10</option>
+                <option value={15}>15</option>
+                <option value={20}>20</option>
+                <option value={30}>30</option>
+              </select>
+            </div>
 
-          <div>
-            {/* <p>{this.state.startTime}</p> */}
-            {/* <TimePicker
+            <div>
+              {/* <p>{this.state.startTime}</p> */}
+              {/* <TimePicker
               onChange={this.handleStartTime}
               value={this.state.startTime}
             /> */}
-          </div>
+            </div>
 
-          <div>
-            {/* <p>{this.state.endTime}</p> */}
-            {/* <TimePicker
+            <div>
+              {/* <p>{this.state.endTime}</p> */}
+              {/* <TimePicker
               onChange={this.handleENdTime}
               value={this.state.endTime}
             /> */}
-          </div>
+            </div>
 
-          <div className="btncontainer">
-            <button type="submit">
-              <i className="fas fa-save"></i> Save
-            </button>
-            <button>
-              <i className="far fa-window-close"></i>Cancel
-            </button>
-          </div>
-        </form>
-        {/* {dayfrom}, {dayto}, {startTime}, {endTime}, {duration}, {days} */}
+            <div className="btncontainer">
+              <button type="submit">
+                <i className="fas fa-save"></i> Save
+              </button>
+              <button>
+                <i className="far fa-window-close"></i>Cancel
+              </button>
+            </div>
+          </form>
+          {/* {dayfrom}, {dayto}, {startTime}, {endTime}, {duration}, {days} */}
+        </div>
       </div>
     );
   }

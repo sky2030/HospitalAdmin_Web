@@ -1,4 +1,5 @@
 import React from "react";
+import Navigation from "./Nav";
 //import ReactDOM from 'react-dom';
 import "./dashboard/dashboard.css";
 import { Link } from "react-router-dom";
@@ -50,7 +51,7 @@ class Adddoctorfee extends React.Component {
         followupfee: this.state.followupfee,
       };
       axios({
-        url: `http://localhost:4300/v1/hospital/doctorfee/${this.props.match.params.id}`,
+        url: `https://stage.mconnecthealth.com/v1/hospital/doctorfee/${this.props.match.params.id}`,
         method: "PUT",
         data: payload,
         headers: {
@@ -105,75 +106,78 @@ class Adddoctorfee extends React.Component {
       return <Redirect to="/Doctorlist" />;
     }
     return (
-      <div className="adddept">
-        <div className="backarrow">
-          {" "}
-          <Link to={"/Doctorprofile/" + this.props.match.params.id}>
-            <i className="fas fa-arrow-left"></i>
-          </Link>
-        </div>
-        <h2>Add Doctor Fee</h2>
+      <div className="Appcontainer">
+        <Navigation />
+        <div className="adddept">
+          <div className="backarrow">
+            {" "}
+            <Link to={"/Doctorprofile/" + this.props.match.params.id}>
+              <i className="fas fa-arrow-left"></i>
+            </Link>
+          </div>
+          <h2>Add Doctor Fee</h2>
 
-        <form action="confirm" onSubmit={this.handleSubmit}>
-          <div className="row">
-            <input
-              type="text"
-              placeholder="Consultation Fee"
-              value={consultation}
-              name="consultation"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {consultationError}
+          <form action="confirm" onSubmit={this.handleSubmit}>
+            <div className="row">
+              <input
+                type="text"
+                placeholder="Consultation Fee"
+                value={consultation}
+                name="consultation"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {consultationError}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <input
-              type="text"
-              placeholder="EWS Fees"
-              value={ewsfee}
-              name="ewsfee"
-              onChange={this.handleChange}
-            />
-            {/* <div style={{ fontSize: 12, color: "red" }}>
+            <div className="row">
+              <input
+                type="text"
+                placeholder="EWS Fees"
+                value={ewsfee}
+                name="ewsfee"
+                onChange={this.handleChange}
+              />
+              {/* <div style={{ fontSize: 12, color: "red" }}>
               {nameError}
             </div> */}
-          </div>
-          <div className="row">
-            <input
-              type="text"
-              placeholder="Follow Up Day"
-              value={followupdays}
-              name="followupdays"
-              onChange={this.handleChange}
-            />
-            {/* <div style={{ fontSize: 12, color: "red" }}>
+            </div>
+            <div className="row">
+              <input
+                type="text"
+                placeholder="Follow Up Day"
+                value={followupdays}
+                name="followupdays"
+                onChange={this.handleChange}
+              />
+              {/* <div style={{ fontSize: 12, color: "red" }}>
               {nameError}
             </div> */}
-          </div>
-          <div className="row">
-            <input
-              type="text"
-              placeholder="Followup Fees"
-              value={followupfee}
-              name="followupfee"
-              onChange={this.handleChange}
-            />
-            {/* <div style={{ fontSize: 12, color: "red" }}>
+            </div>
+            <div className="row">
+              <input
+                type="text"
+                placeholder="Followup Fees"
+                value={followupfee}
+                name="followupfee"
+                onChange={this.handleChange}
+              />
+              {/* <div style={{ fontSize: 12, color: "red" }}>
               {nameError}
             </div> */}
-          </div>
+            </div>
 
-          <div className="btncontainer">
-            <button type="submit">
-              {" "}
-              <i className="fas fa-save"></i> Save{" "}
-            </button>
-            <button onClick={this.resetUserInputs}>
-              <i className="fas fa-save"></i>Reset
-            </button>
-          </div>
-        </form>
+            <div className="btncontainer">
+              <button type="submit">
+                {" "}
+                <i className="fas fa-save"></i> Save{" "}
+              </button>
+              <button onClick={this.resetUserInputs}>
+                <i className="fas fa-save"></i>Reset
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     );
   }

@@ -4,6 +4,7 @@ import "./dashboard/dashboard.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
+import Navigation from "./Nav";
 
 const initialState = {
   hospitalcode: "",
@@ -32,13 +33,6 @@ class Adddepartment extends React.Component {
       descriptionError = "****Description cannot be blank";
     }
 
-    // if (!this.state.email.includes("@")) {
-    //   emailError = "****Invalid Email";
-    // }
-    // if (!this.state.phone) {
-    //   phoneError = "****Phone number cannot be blank";
-    // }
-
     if (departmentnameError || descriptionError) {
       this.setState({ departmentnameError, descriptionError });
       return false;
@@ -46,6 +40,47 @@ class Adddepartment extends React.Component {
 
     return true;
   };
+
+   SubmitDepartment = (event) => {
+    event.preventDefault();
+    const {
+      departmentname,
+      description,
+      picture
+    } = this.state;
+    const isValid = this.validate();
+    if (isValid) {
+      const payload = new FormData();
+      payload.append("departmentname", departmentname);
+      payload.append("description", description);
+      payload.append("picture", picture);
+      axios({
+        url: "https://stage.mconnecthealth.com/v1/hospital/department/add",
+        method: "POST",
+        data: payload,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: localStorage.getItem("token"),
+        },
+      })
+        .then((response) => {
+          if (response.code === 200) {
+            alert(response.message);
+            console.log("Data has been sent to the server successfully");
+          } else {
+            console.log(response.message);
+          }
+          this.resetUserInputs();
+          this.setState({
+            submitted: true,
+          });
+        })
+        .catch(() => {
+          console.log("internal server error");
+        });
+    }
+  };
+
 
   handleSubmit = (event) => {
     event.preventDefault();
@@ -58,7 +93,7 @@ class Adddepartment extends React.Component {
         picture: this.state.picture,
       };
       axios({
-        url: "http://localhost:4300/v1/hospital/department/add",
+        url: "https://stage.mconnecthealth.com/v1/hospital/department/add",
         method: "POST",
         data: payload,
         headers: {
@@ -84,13 +119,13 @@ class Adddepartment extends React.Component {
     this.setState({ [name]: value });
   };
 
-  // onChangeHandler = event => {
-  //   this.setState({
-  //     selectedFile: event.target.files[0],
-  //     loaded: 0,
-  //   })
-
-  // }
+  onFileHandler = async (event) => {
+    await this.setState({
+      picture: event.target.files[0],
+      loaded: 0,
+    });
+    console.log(this.state.picture);
+  };
 
   onChangeHandler = (event) => {
     console.log("file to upload:", event.target.files[0]);
@@ -147,101 +182,78 @@ class Adddepartment extends React.Component {
 
   resetUserInputs = () => {
     this.setState(initialState);
-    // this.setState({
-    //   hospitalname:'',
-    //   code:'',
-    //   email:'',
-    //   phone:'',
-    //   picture:'',
-    //   place:'',
-    //   Landmark:'',
-    //   District:'',
-    //   city:'',
-    //   state:'',
-    //   pincode:''
-    // });
+  
   };
   render() {
     if (this.state.submitted) {
       return <Redirect to="/Alldepartment" />;
     }
     return (
-      <div className="adddept">
-        <div className="backarrow">
-          {" "}
-          <Link to="/Alldepartment">
-            <i className="fas fa-arrow-left"></i>
-          </Link>
+      <div className="Appcontainer">
+        <Navigation />
+        <div className="adddept">
+          <div className="backarrow">
+            {" "}
+            <Link to="/Alldepartment">
+              <i className="fas fa-arrow-left"></i>
+            </Link>
+          </div>
+          <h2>Add Department</h2>
+
+          <form onSubmit={this.handleSubmit}>
+            <div className="row">
+              <label>Department Name:</label>
+              <input
+                type="text"
+                value={this.state.departmentname}
+                name="departmentname"
+                placeholder="Enter Department Name"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.departmentnameError}
+              </div>
+            </div>
+           
+            <div className="row">
+              <label> Description:</label>
+              <input
+                type="text"
+                value={this.state.description}
+                name="description"
+                placeholder="Enter Description"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.descriptionError}
+              </div>
+            </div>
+            <div className="row">
+              <input
+                type="file"
+                className="uploadbox"
+                name="file"
+                accept=".jpeg, .png, .jpg"
+                onChange={this.onChangeHandler}
+              />
+            </div>
+            <div className="btncontainer">
+
+              <button onClick={this.resetUserInputs}>
+                <i className="fas fa-save"></i>Reset
+              </button>
+              {/* <input type='submit' value='Save' />  */}
+              <button type="submit">
+                <i className="fas fa-save"></i>Save
+              </button>
+            </div>
+            <img
+              alt="Department"
+              src={this.state.picture}
+              style={{ width: "50%" }}
+            />
+          </form>
         </div>
-        <h2>Add Department</h2>
-
-        <form onSubmit={this.handleSubmit}>
-          <div className="row">
-            <label>Department Name:</label>
-            <input
-              type="text"
-              value={this.state.departmentname}
-              name="departmentname"
-              placeholder="Enter Department Name"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.departmentnameError}
-            </div>
-          </div>
-          {/* <div className="row">
-            <label>Department Code:</label>
-            <input type="text"
-              value={this.state.deptcode}
-              name="deptcode"
-
-              placeholder="Enter Department Code"
-              onChange={this.handleChange} />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.nameError}
-            </div>
-          </div> */}
-          <div className="row">
-            <label> Description:</label>
-            <input
-              type="text"
-              value={this.state.description}
-              name="description"
-              placeholder="Enter Description"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.descriptionError}
-            </div>
-          </div>
-          <div className="row">
-            <input
-              type="file"
-              className="uploadbox"
-              name="file"
-              accept=".jpeg, .png, .jpg"
-              onChange={this.onChangeHandler}
-            />
-          </div>
-          <div className="btncontainer">
-            {/* <button onClick={this.handleUpload}>
-              <i className="fas fa-upload"></i>Upload Image
-              </button> */}
-
-            <button onClick={this.resetUserInputs}>
-              <i className="fas fa-save"></i>Reset
-            </button>
-            {/* <input type='submit' value='Save' />  */}
-            <button type="submit">
-              <i className="fas fa-save"></i>Save
-            </button>
-          </div>
-          <img
-            alt="Department"
-            src={this.state.picture}
-            style={{ width: "50%" }}
-          />
-        </form>
       </div>
     );
   }

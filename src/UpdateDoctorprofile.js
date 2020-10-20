@@ -1,36 +1,14 @@
 import React from "react";
+import Navigation from "./Nav";
 //import ReactDOM from 'react-dom';
 import "./dashboard/dashboard.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 
-// const initialState = {
-// 	first_name: "",
-// 	last_name: "",
-// 	mobile: "",
-// 	email: "",
-// 	gender: "",
-// 	dob: "",
-// 	password: "",
-// 	picture: "",
-// 	gender: "",
-// 	department: "",
-// 	deptcode: "",
-// 	registration_no: "",
-// 	experience: "",
-// 	degree: "",
-// 	designation: "",
-// 	specialities: "",
-// 	nameError: "",
-// 	emailError: "",
-// 	phoneError: "",
-// 	selectedFile: null,
-// 	submitted: false,
-// 	posts: []
-// };
 
-class Adddoctor extends React.Component {
+
+class UpdateDoctorProfile extends React.Component {
   constructor(props) {
     super(props);
     const token = localStorage.getItem("token");
@@ -52,6 +30,7 @@ class Adddoctor extends React.Component {
       registration_no: "",
       experience: "",
       degree: "",
+      department: "",
       designation: "",
       specialities: "",
       nameError: "",
@@ -65,6 +44,7 @@ class Adddoctor extends React.Component {
       designationError: "",
       specialitiesError: "",
       deptError: "",
+      
       passwordError: "",
       selectedFile: null,
       submitted: false,
@@ -79,18 +59,16 @@ class Adddoctor extends React.Component {
   };
 
   getDoctor = () => {
-    //  axios.get('/v1/admin/hospitals/'+`?hospitalcode=${this.props.match.params.id}&doctorName=Sanjeev`,
     axios
       .get(
-        `http://localhost:4300/v1/hospital/doctors/` +
-        this.props.match.params.id,
+        `https://stage.mconnecthealth.com/v1/hospital/doctors/` +
+          this.props.match.params.id,
         {
           headers: {
             Authorization: localStorage.getItem("token"),
           },
         }
       )
-      // axios.get('http://localhost:4300/saket_Hospital')
       .then((response) => {
         console.log(response);
         const data = response.data.data;
@@ -119,8 +97,7 @@ class Adddoctor extends React.Component {
       });
   };
 
-  //state = initialState;
-
+ 
   validate = () => {
     let deptError = "";
     let emailError = "";
@@ -207,17 +184,76 @@ class Adddoctor extends React.Component {
     return true;
   };
 
-  // componentDidMount = () => {
-  // 	console.log(`this is hospital code ${this.state.hospitalcode}`);
-  // 	this.getDepartments();
-  // };
+  UpdateDoctor = (event) => {
+    event.preventDefault();
+    const {
+      first_name,
+      last_name,
+      mobile,
+      email,
+      gender,
+      dob,
+      password,
+      picture,
+      registration_no,
+      experience,
+      degree,
+      designation,
+      deptcode,
+      specialities,
+      department
+    } = this.state;
+    const isValid = this.validate();
+    if (isValid) {
+      const payload = new FormData();
+      payload.append("first_name", first_name);
+      payload.append("last_name", last_name);
+      payload.append("mobile", mobile);
+      payload.append("email", email);
+      payload.append("gender", gender);
+      payload.append("dob", dob);
+      payload.append("password", password);
+      payload.append("picture", picture);
+      payload.append("registration_no", registration_no);
+      payload.append("experience", experience);
+      payload.append("degree", degree);
+      payload.append("designation", designation);
+      payload.append("department", department);
+      payload.append("deptcode", deptcode);
+      payload.append("specialities", specialities);
+      
+      axios({
+        url: `https://stage.mconnecthealth.com/v1/hospital/doctors/${this.state.id}`,
+        method: "PUT",
+        data: payload,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: localStorage.getItem("token"),
+        },
+      })
+        .then((response) => {
+          if (response.code === 200) {
+            alert(response.message);
+            console.log("Data has been sent to the server successfully");
+          } else {
+            console.log(response.message);
+          }
+          this.resetUserInputs();
+          this.setState({
+            submitted: true,
+          });
+        })
+        .catch(() => {
+          console.log("internal server error");
+        });
+    }
+  };
 
   handleSubmit = (event) => {
     console.log("update Initiated");
     event.preventDefault();
     const isValid = this.validate();
     if (isValid) {
-
       // const data = new FormData()
       // data.append('file', this.state.selectedFile)
 
@@ -239,7 +275,7 @@ class Adddoctor extends React.Component {
         specialities: this.state.specialities,
       };
       axios({
-        url: `http://localhost:4300/v1/hospital/doctors/${this.state.id}`,
+        url: `https://stage.mconnecthealth.com/v1/hospital/doctors/${this.state.id}`,
         method: "PUT",
         data: payload,
         headers: {
@@ -248,7 +284,7 @@ class Adddoctor extends React.Component {
       })
         .then(() => {
           console.log("Data has been sent to the server successfully");
-          console.log(this.state.picture);
+          //console.log(this.state.picture);
           alert("Doctor has been Updated");
           this.resetUserInputs();
           this.setState({
@@ -266,13 +302,14 @@ class Adddoctor extends React.Component {
     this.setState({ [name]: value });
   };
 
-  // onChangeHandler = event => {
-  // 	this.setState({
-  // 		selectedFile: event.target.files[0],
-  // 		loaded: 0,
-  // 	})
+ onFileHandler = async (event) => {
+    await this.setState({
+      picture: event.target.files[0],
+      loaded: 0,
+    });
+    console.log(this.state.picture);
+  };
 
-  // }
   onChangeHandler = (event) => {
     console.log("file to upload:", event.target.files[0]);
 
@@ -332,7 +369,7 @@ class Adddoctor extends React.Component {
         this.setState({
           picture: data.url,
         });
-        console.log(this.state.picture);
+        //console.log(this.state.picture);
       })
       .catch((err) => {
         console.log("error while uploading" + err);
@@ -364,7 +401,6 @@ class Adddoctor extends React.Component {
       email,
       dob,
       password,
-      picture,
       registration_no,
       experience,
       degree,
@@ -376,178 +412,181 @@ class Adddoctor extends React.Component {
       return <Redirect to="/Doctorlist" />;
     }
     return (
-      <div className="adddept">
-        <div className="backarrow">
-          {" "}
-          <Link to={"/Doctorprofile/" + this.props.match.params.id}>
-            <i className="fas fa-arrow-left"></i>
-          </Link>
-        </div>
-        <h2>Update Doctor</h2>
+      <div className="Appcontainer">
+        <Navigation />
+        <div className="adddept">
+          <div className="backarrow">
+            {" "}
+            <Link to={"/Doctorprofile/" + this.props.match.params.id}>
+              <i className="fas fa-arrow-left"></i>
+            </Link>
+          </div>
+          <h2>Update Doctor</h2>
 
-        <form action="confirm" onSubmit={this.handleSubmit}>
-          {/* <div className="imgdetail">
+          <form action="confirm" onSubmit={this.handleSubmit}>
+            {/* <div className="imgdetail">
 						<img src={picture} alt="Doctor" className="imgdetail" />
 					</div> */}
-          <div className="row">
-            <input
-              type="text"
-              placeholder="Enter First Name"
-              value={first_name}
-              name="first_name"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.nameError}
+            <div className="row">
+              <input
+                type="text"
+                placeholder="Enter First Name"
+                value={first_name}
+                name="first_name"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.nameError}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <input
-              type="text"
-              placeholder=" Enter Last Name"
-              value={last_name}
-              name="last_name"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.nameError}
+            <div className="row">
+              <input
+                type="text"
+                placeholder=" Enter Last Name"
+                value={last_name}
+                name="last_name"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.nameError}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <input
-              type="text"
-              placeholder=" Enter Email"
-              value={email}
-              name="email"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.emailError}
+            <div className="row">
+              <input
+                type="text"
+                placeholder=" Enter Email"
+                value={email}
+                name="email"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.emailError}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <input
-              type="text"
-              placeholder="Enter Phone Number"
-              value={mobile}
-              name="mobile"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.phoneError}
+            <div className="row">
+              <input
+                type="text"
+                placeholder="Enter Phone Number"
+                value={mobile}
+                name="mobile"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.phoneError}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <input
-              type="password"
-              placeholder="Enter Password"
-              value={password}
-              name="password"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.passwordError}
+            <div className="row">
+              <input
+                type="password"
+                placeholder="Enter Password"
+                value={password}
+                name="password"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.passwordError}
+              </div>
             </div>
-          </div>
 
-          <div className="row">
-            <input
-              type="text"
-              placeholder="Date of Birth"
-              value={dob}
-              name="dob"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.dobError}
+            <div className="row">
+              <input
+                type="text"
+                placeholder="Date of Birth"
+                value={dob}
+                name="dob"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.dobError}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <input
-              type="text"
-              placeholder="Enter Registration Number"
-              value={registration_no}
-              name="registration_no"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.registrationError}
+            <div className="row">
+              <input
+                type="text"
+                placeholder="Enter Registration Number"
+                value={registration_no}
+                name="registration_no"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.registrationError}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <input
-              type="text"
-              placeholder=" Enter Experience"
-              value={experience}
-              name="experience"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.expError}
+            <div className="row">
+              <input
+                type="text"
+                placeholder=" Enter Experience"
+                value={experience}
+                name="experience"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.expError}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <input
-              type="text"
-              placeholder="Enter Degree"
-              value={degree}
-              name="degree"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.degreeError}
+            <div className="row">
+              <input
+                type="text"
+                placeholder="Enter Degree"
+                value={degree}
+                name="degree"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.degreeError}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <input
-              type="text"
-              placeholder="Enter Designation"
-              value={designation}
-              name="designation"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.designationError}
+            <div className="row">
+              <input
+                type="text"
+                placeholder="Enter Designation"
+                value={designation}
+                name="designation"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.designationError}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <input
-              type="text"
-              placeholder="Enter Specialities"
-              value={specialities}
-              name="specialities"
-              onChange={this.handleChange}
-            />
-            <div style={{ fontSize: 12, color: "red" }}>
-              {this.state.specialitiesError}
+            <div className="row">
+              <input
+                type="text"
+                placeholder="Enter Specialities"
+                value={specialities}
+                name="specialities"
+                onChange={this.handleChange}
+              />
+              <div style={{ fontSize: 12, color: "red" }}>
+                {this.state.specialitiesError}
+              </div>
             </div>
-          </div>
-          <div className="row">
-            <input
-              type="file"
-              className="uploadbox"
-              name="file"
-              accept=".jpeg, .png, .jpg"
-              onChange={this.onChangeHandler}
+            <div className="row">
+              <input
+                type="file"
+                className="uploadbox"
+                name="file"
+                accept=".jpeg, .png, .jpg"
+                onChange={this.onChangeHandler}
+              />
+            </div>
+            <div className="btncontainer">
+              {/* <button onClick={this.handleUpload}><i className="fas fa-upload"></i>Upload Image </button> */}
+              <button onClick={this.resetUserInputs}>
+                <i className="fas fa-save"></i>Reset
+              </button>
+              <button type="submit">
+                <i className="fas fa-save"></i>Update Profile
+              </button>
+            </div>
+            <img
+              alt="Hospital"
+              src={this.state.picture}
+              style={{ width: "50%" }}
             />
-          </div>
-          <div className="btncontainer">
-            {/* <button onClick={this.handleUpload}><i className="fas fa-upload"></i>Upload Image </button> */}
-            <button onClick={this.resetUserInputs}>
-              <i className="fas fa-save"></i>Reset
-            </button>
-            <button type="submit">
-              <i className="fas fa-save"></i>Update Profile
-            </button>
-          </div>
-          <img
-            alt="Hospital"
-            src={this.state.picture}
-            style={{ width: "50%" }}
-          />
-        </form>
+          </form>
+        </div>
       </div>
     );
   }
 }
-export default Adddoctor;
+export default UpdateDoctorProfile;

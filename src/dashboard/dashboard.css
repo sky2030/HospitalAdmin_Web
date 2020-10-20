@@ -4,6 +4,58 @@
   font-family: "Roboto", sans-serif;
   box-sizing: border-box;
 }
+img.vert-move {
+  -webkit-animation: mover 1s infinite alternate;
+  animation: mover 1s infinite alternate;
+}
+img.vert-move {
+  -webkit-animation: mover 1s infinite alternate;
+  animation: mover 1s infinite alternate;
+}
+@-webkit-keyframes mover {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-40px);
+  }
+}
+@keyframes mover {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-40px);
+  }
+}
+
+.transactioncard {
+  width: 95%;
+  margin: 10px auto 60px auto;
+  background: rgb(238, 238, 238);
+  background: radial-gradient(
+    circle,
+    rgba(238, 238, 238, 1) 0%,
+    rgba(215, 230, 246, 1) 100%
+  );
+  text-align: center;
+}
+.transactioncard h2 {
+  background-color: rgb(46 82 147);
+  color: #fff;
+  font-size: 20px;
+  padding: 5px;
+  text-align: center;
+}
+.specialityIMG {
+  width: 200px;
+  height: 150px;
+}
+
+.specialitycards p {
+  color: #6e0214;
+  font-weight: 600;
+}
 
 .splash_bg {
   background: #000428; /* fallback for old browsers */
@@ -17,8 +69,10 @@
     #004e92,
     #000428
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
   height: 87vh;
-  display: flex;
+  /* display: flex; */
+  height: 96vh;
   width: 100%;
   justify-content: center;
   align-items: center;
@@ -97,6 +151,10 @@
   justify-content: center;
 }
 
+.Appcontainer {
+  align-items: center;
+  justify-content: center;
+}
 .App {
   text-align: center;
   width: 100vw;
@@ -112,7 +170,7 @@
   justify-items: center;
 }
 body {
-  background-color: #f9f9f9;
+  background-color: #fff;
 }
 .myhospital {
   width: 12vw;
@@ -127,8 +185,29 @@ body {
 }
 
 .splash-logo {
-  height: 50vmin;
+  height: 55vmin;
   pointer-events: none;
+}
+
+img.vert-move {
+  -webkit-animation: mover 1s infinite alternate;
+  animation: mover 1s infinite alternate;
+}
+@-webkit-keyframes mover {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-10vh);
+  }
+}
+@keyframes mover {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-10vh);
+  }
 }
 
 .head-logo {
@@ -470,6 +549,18 @@ form {
   padding: 7px 15px;
   cursor: pointer;
 }
+
+.specialitycards button {
+  font-size: 15px;
+
+  background-color: rgb(210, 211, 141, 0);
+  border: 0px;
+  height: 20px;
+  padding: 5px;
+  color: rgb(26, 2, 160);
+  border-radius: 2px;
+  cursor: pointer;
+}
 .detailsdept button i {
   font-size: 16px;
   margin-right: 5px;
@@ -493,31 +584,58 @@ form {
   border-radius: 4px;
   font-size: 16px;
   font-weight: bold;
-  width:100%;
+  width: 100%;
 }
 .alldept ul li a {
   text-decoration: none;
   color: #fff;
 }
-.alldept1 ul {
-  list-style-type: none;
-  margin: 0 auto;
-  padding: 0;
-  width: 50%;
+.alldept1 {
+  width: 100vw;
+  flex-direction: row;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
 }
-.alldept1 ul li {
-  padding: 15px;
-  text-align: left;
-  background-color: rgba(69, 150, 216, 0.8);
+.Speciality {
+  width: 100vw;
+  flex-direction: row;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.InnerSpeciality {
+  width: 50vw;
+
+  background: radial-gradient(
+    circle,
+    rgba(238, 238, 238, 1) 0%,
+    rgba(215, 230, 246, 1) 100%
+  );
+  border-radius: 2em;
+  height: 70vh;
+  flex-direction: column;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 1em;
+  padding-top: 2em;
+  align-items: center;
+}
+
+.specialitycards {
+  text-align: center;
+  background-color: rgb(210, 211, 141);
   margin: 10px;
-  border-radius: 4px;
+  border-radius: 10px;
   font-size: 16px;
-  font-weight: bold;
-  width:100%;
-}
-.alldept1 ul li a {
   text-decoration: none;
-  color: #fff;
+  padding-bottom: 5px;
+}
+h3 {
+  text-decoration: none;
+  color: #000;
 }
 .add_departmet a {
   color: #fff;
@@ -536,11 +654,8 @@ form {
   padding-bottom: 20px;
   padding-top: 15px;
   text-align: center;
-  margin-right: 3em;
 }
 .add_departmet1 {
-  /* padding-bottom: 20px; */
-  /* padding-top: 15px; */
   text-align: center;
 }
 .backarrow {
@@ -561,9 +676,8 @@ form {
 .flex-container {
   display: flex;
 
-  justify-content: left;
+  justify-content: center;
   flex-wrap: wrap;
-  margin-left: 7%;
   margin-top: 1rem;
   flex-direction: row;
 
@@ -682,10 +796,15 @@ form {
 .alltransation > div p b {
   color: #0669b9;
 }
+.transdoctor {
+  color: #0669b9;
+  font-weight: bold;
+  border-width: 0px;
+}
 .alltransation {
   display: flex;
   background-color: #ffff;
-  margin: 10px;
+  margin: 4px;
   border-radius: 10px;
   box-shadow: 5px 2px 6px #ccc;
 }

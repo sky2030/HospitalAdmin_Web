@@ -1,4 +1,5 @@
 import React from "react";
+import Navigation from "./Nav";
 //import ReactDOM from 'react-dom';
 import "./dashboard/dashboard.css";
 //import nerology from './img/Nerology.png';
@@ -8,6 +9,9 @@ import "./dashboard/dashboard.css";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
+
+ const BASE = "https://stage.mconnecthealth.com";
+
 
 class Doctorprofile extends React.Component {
   constructor(props) {
@@ -21,6 +25,7 @@ class Doctorprofile extends React.Component {
     this.state = {
       loggedIn,
       post: {},
+      submitted: false,
     };
   }
   componentDidMount = () => {
@@ -34,7 +39,7 @@ class Doctorprofile extends React.Component {
     //  axios.get('/v1/admin/hospitals/'+`?hospitalcode=${this.props.match.params.id}&doctorName=Sanjeev`,
     axios
       .get(
-        `http://localhost:4300/v1/hospital/doctors/` +
+        `https://stage.mconnecthealth.com/v1/hospital/doctors/` +
           this.props.match.params.id,
         {
           headers: {
@@ -42,7 +47,7 @@ class Doctorprofile extends React.Component {
           },
         }
       )
-      // axios.get('http://localhost:4300/saket_Hospital')
+      // axios.get('https://stage.mconnecthealth.com/saket_Hospital')
       .then((response) => {
         console.log(response);
         const data = response.data.data;
@@ -53,75 +58,105 @@ class Doctorprofile extends React.Component {
         alert("Error retrieving data!!");
       });
   };
+
+  DeleteDoctor = () => {
+    axios({
+      url: `https://stage.mconnecthealth.com/v1/hospital/doctors/${this.props.match.params.id}`,
+      method: "delete",
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+      .then((data) => {
+        if (data.data.code === 200) {
+          this.setState({
+            submitted: true,
+          });
+          alert("Doctor has been Deleted Successfully");
+        } else {
+          alert("Something Went Wrong");
+        }
+      })
+      .catch(() => {
+        console.log("internal server error");
+      });
+    //}
+  };
   render() {
     const { post } = this.state;
 
     if (this.state.loggedIn === false) {
-      return <Redirect to="/splash" />;
+      return <Redirect to="/" />;
+    }
+    if (this.state.submitted) {
+      return <Redirect to="/Doctorlist" />;
     }
     return (
-      <div className="detailsdept">
-        <div className="backarrow">
-          {" "}
-          <Link to="/Doctorlist">
-            <i className="fas fa-arrow-left"></i>
-          </Link>
-        </div>
-        <h2>Doctor Profile</h2>
-        <div className="scrolldiv">
-          <img src={post.picture} alt="Neorology" />
-          <h3>
-            Dr. {post.first_name} {post.last_name}
-          </h3>
-          <p>{post.designation}</p>
-          <ul className="dlist">
-            <li>
-              <i className="fas fa-user"></i>
-              {post.department}
-            </li>
-            <li>
-              <i className="fas fa-user-md"></i>
-              {post.experience}
-            </li>
-            <li>
-              <i className="fas fa-certificate"></i>
-              {post.degree}
-            </li>
-            <li>
-              <i className="far fa-envelope"></i>
-              {post.email}
-            </li>
-            <li>
-              <i className="fas fa-phone-alt"></i>
-              {post.mobile}
-            </li>
-            <li>
-              <i className="fas fa-rupee-sign"></i>
-              {post.consultation}
-            </li>
-            <li>
-              <i className="fas fa-birthday-cake"></i>
-              {post.dob}
-            </li>
-          </ul>
-          <Link to={"/Updateprofile/" + post._id}>
-            <button>
-              <i className="far fa-edit"></i> Update Details{" "}
+      <div className="Appcontainer">
+        <Navigation />
+        <div className="detailsdept">
+          <div className="backarrow">
+            {" "}
+            <Link to="/Doctorlist">
+              <i className="fas fa-arrow-left"></i>
+            </Link>
+          </div>
+          <h2>Doctor Profile</h2>
+          <div className="scrolldiv">
+            <img src={post.picture} alt="Neorology" />
+            <h3>
+              Dr. {post.first_name} {post.last_name}
+            </h3>
+            <p>{post.designation}</p>
+            <ul className="dlist">
+              <li>
+                <i className="fas fa-user"></i>
+                {post.department}
+              </li>
+              <li>
+                <i className="fas fa-user-md"></i>
+                {post.experience}
+              </li>
+              <li>
+                <i className="fas fa-certificate"></i>
+                {post.degree}
+              </li>
+              <li>
+                <i className="far fa-envelope"></i>
+                {post.email}
+              </li>
+              <li>
+                <i className="fas fa-phone-alt"></i>
+                {post.mobile}
+              </li>
+              <li>
+                <i className="fas fa-rupee-sign"></i>
+                {post.consultation}
+              </li>
+              <li>
+                <i className="fas fa-birthday-cake"></i>
+                {post.dob}
+              </li>
+            </ul>
+            <Link to={"/Updateprofile/" + post._id}>
+              <button>
+                <i className="far fa-edit"></i> Update Details{" "}
+              </button>
+            </Link>
+            <button onClick={this.DeleteDoctor}>
+              <i className="fas fa-trash"></i>Delete{" "}
             </button>
-          </Link>
-          <button>
-            <i className="fas fa-trash"></i>Delete{" "}
-          </button>
-          <Link to={"/Adddoctorfee/" + post._id}>
-            <button>
-              <i className="fas fa-rupee-sign"></i>Add Fees{" "}
-            </button>
-          </Link>
-          <Link to={"/Manageconsulation/" + post._id}>
-            <button>
-              <i className="fas fa-hospital"></i>Manage Slots{" "}
-            </button>{" "}
-          </Link>
+            <Link to={"/Adddoctorfee/" + post._id}>
+              <button>
+                <i className="fas fa-rupee-sign"></i>Add Fees{" "}
+              </button>
+            </Link>
+            <Link to={"/Manageconsulation/" + post._id}>
+              <button>
+                <i className="fas fa-hospital"></i>Manage Slots{" "}
+              </button>{" "}
+            </Link>
+          </div>
         </div>
       </div>
     );

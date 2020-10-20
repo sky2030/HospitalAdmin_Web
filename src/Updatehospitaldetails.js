@@ -1,4 +1,5 @@
 import React from "react";
+import Navigation from "./Nav";
 //import ReactDOM from 'react-dom';
 import "./dashboard/dashboard.css";
 //import docicon from './img/doctor-icon.jpg';
@@ -34,21 +35,17 @@ class Updatehospitaldetails extends React.Component {
     };
   }
   componentDidMount = () => {
-    //  console.log(`This is Hospital ID ${this.props.match.params.id}`)
     this.getHospital();
-    //  this.setState({hospital: this.props.match.params});
-    //  console.log(`This is Hospital Name ${this.props.match.params.hospitalname}`)
+    
   };
 
   getHospital = () => {
-    //  axios.get('/v1/admin/hospitals/'+`?hospitalcode=${this.props.match.params.id}&doctorName=Sanjeev`,
     axios
-      .get("http://localhost:4300/v1/hospital", {
+      .get("https://stage.mconnecthealth.com/v1/hospital", {
         headers: {
           Authorization: localStorage.getItem("token"),
         },
       })
-      // axios.get('http://localhost:4300/saket_Hospital')
       .then((response) => {
         console.log(response);
         const data = response.data.data;
@@ -103,6 +100,51 @@ class Updatehospitaldetails extends React.Component {
     return true;
   };
 
+   UpdateHospital = (event) => {
+     event.preventDefault();     
+    const {
+      email,
+      phone,
+      emergencyNo,
+      emergencyDetail,
+      picture
+     } = this.state;
+      
+    const isValid = this.validate();
+    if (isValid) {
+      const payload = new FormData();
+      payload.append("email", email);
+      payload.append("phone", phone);
+      payload.append("emergencyNo", emergencyNo);
+      payload.append("emergencyDetail", emergencyDetail);
+      payload.append("picture", picture);
+      axios({
+        url: `https://stage.mconnecthealth.com/v1/hospital/${this.state.id}`,
+        method: "PUT",
+        data: payload,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: localStorage.getItem("token"),
+        },
+      })
+        .then((response) => {
+          if (response.code === 200) {
+            alert(response.message);
+            console.log("Data has been sent to the server successfully");
+          } else {
+            console.log(response.message);
+          }
+          this.resetUserInputs();
+          this.setState({
+            submitted: true,
+          });
+        })
+        .catch(() => {
+          console.log("internal server error");
+        });
+    }
+  };
+
   handleSubmit = (event) => {
     event.preventDefault();
     //const isValid = this.validate();
@@ -116,7 +158,7 @@ class Updatehospitaldetails extends React.Component {
       emergencyDetail: this.state.emergencyDetail,
     };
     axios({
-      url: `http://localhost:4300/v1/hospital/${this.state.id}`,
+      url: `https://stage.mconnecthealth.com/v1/hospital/${this.state.id}`,
       method: "PUT",
       data: payload,
       headers: {
@@ -143,13 +185,13 @@ class Updatehospitaldetails extends React.Component {
     this.setState({ [name]: value });
   };
 
-  // onChangeHandler = event => {
-  // 	this.setState({
-  // 		selectedFile: event.target.files[0],
-  // 		loaded: 0,
-  // 	})
-
-  // }
+  onFileHandler = async (event) => {
+    await this.setState({
+      picture: event.target.files[0],
+      loaded: 0,
+    });
+    console.log(this.state.picture);
+  };
 
   onChangeHandler = (event) => {
     console.log("file to upload:", event.target.files[0]);
@@ -161,14 +203,7 @@ class Updatehospitaldetails extends React.Component {
       console.log(result);
     });
 
-    // let file = event.target.files[0];
-
-    // if (file) {
-    //   const reader = new FileReader();
-
-    //   reader.onload = this._handleReaderLoaded.bind(this);
-    //   reader.readAsBinaryString(file);
-    // }
+ 
   };
 
   getBase64(file, cb) {
@@ -227,100 +262,104 @@ class Updatehospitaldetails extends React.Component {
     });
   };
   render() {
-    const { email, phone, emergencyDetail, emergencyNo, picture } = this.state;
+    const { email, phone, emergencyDetail, emergencyNo } = this.state;
 
     if (this.state.submitted) {
       return <Redirect to="/Myhospital" />;
     }
     return (
-      <div className="dashboard_wrap">
-        {/* <div className="banner-text">
+      <div className="Appcontainer">
+        <Navigation />
+
+        <div className="dashboard_wrap">
+          {/* <div className="banner-text">
 					<img className="hospitalimage" src={picture} alt="hospital_img" />
 
 				</div> */}
 
-        <div className="adddept">
-          <div className="backarrow">
-            {" "}
-            <Link to="/Myhospital">
-              <i className="fas fa-arrow-left"></i>
-            </Link>
+          <div className="adddept">
+            <div className="backarrow">
+              {" "}
+              <Link to="/Myhospital">
+                <i className="fas fa-arrow-left"></i>
+              </Link>
+            </div>
+            <h2>Update Hospital Details</h2>
+
+            <form action="confirm" onSubmit={this.handleSubmit}>
+              <div className="row">
+                <input
+                  type="text"
+                  name="email"
+                  value={email}
+                  placeholder="Enter Email Address"
+                  onChange={this.handleChange}
+                />
+                <div style={{ fontSize: 12, color: "red" }}>
+                  {this.state.emailError}
+                </div>
+
+                <input
+                  type="text"
+                  name="phone"
+                  value={phone}
+                  placeholder="Enter Phone Number"
+                  onChange={this.handleChange}
+                />
+                <div style={{ fontSize: 12, color: "red" }}>
+                  {this.state.phoneError}
+                </div>
+
+                <input
+                  type="text"
+                  name="emergencyNo"
+                  value={emergencyNo}
+                  placeholder="Enter Emergency Number"
+                  onChange={this.handleChange}
+                />
+                <div style={{ fontSize: 12, color: "red" }}>
+                  {this.state.emergencyNoError}
+                </div>
+
+                <input
+                  type="text"
+                  name="emergencyDetail"
+                  value={emergencyDetail}
+                  placeholder="Enter Emergency Email Address"
+                  onChange={this.handleChange}
+                />
+                <div style={{ fontSize: 12, color: "red" }}>
+                  {this.state.emergencyDetailError}
+                </div>
+              </div>
+              <div className="row">
+                <input
+                  type="file"
+                  className="uploadbox"
+                  name="file"
+                  accept=".jpeg, .png, .jpg"
+                  onChange={this.onChangeHandler}
+                />
+              </div>
+
+              <div className="btncontainer">
+                {/* <button onClick={this.handleUpload}><i className="fas fa-check"></i>Update Image </button> */}
+                <button onClick={this.resetUserInputs}>
+                  <i className="fas fa-save"></i>
+                  Reset
+                </button>
+                <button type="submit">
+                  <i className="fas fa-save"></i>
+                  Update Details
+                </button>
+              </div>
+              <img
+                alt="Hospital"
+                src={this.state.picture}
+                style={{ width: "50%" }}
+              />
+            </form>
           </div>
-          <h2>Update Hospital Details</h2>
-
-          <form action="confirm" onSubmit={this.handleSubmit}>
-            <div className="row">
-              <input
-                type="text"
-                name="email"
-                value={email}
-                placeholder="Enter Email Address"
-                onChange={this.handleChange}
-              />
-              <div style={{ fontSize: 12, color: "red" }}>
-                {this.state.emailError}
-              </div>
-
-              <input
-                type="text"
-                name="phone"
-                value={phone}
-                placeholder="Enter Phone Number"
-                onChange={this.handleChange}
-              />
-              <div style={{ fontSize: 12, color: "red" }}>
-                {this.state.phoneError}
-              </div>
-
-              <input
-                type="text"
-                name="emergencyNo"
-                value={emergencyNo}
-                placeholder="Enter Emergency Number"
-                onChange={this.handleChange}
-              />
-              <div style={{ fontSize: 12, color: "red" }}>
-                {this.state.emergencyNoError}
-              </div>
-
-              <input
-                type="text"
-                name="emergencyDetail"
-                value={emergencyDetail}
-                placeholder="Enter Emergency Detail"
-                onChange={this.handleChange}
-              />
-              <div style={{ fontSize: 12, color: "red" }}>
-                {this.state.emergencyDetailError}
-              </div>
-            </div>
-            <div className="row">
-              <input
-                type="file"
-                className="uploadbox"
-                name="file"
-                accept=".jpeg, .png, .jpg"
-                onChange={this.onChangeHandler}
-              />
-            </div>
-
-            <div className="btncontainer">
-              {/* <button onClick={this.handleUpload}><i className="fas fa-check"></i>Update Image </button> */}
-              <button onClick={this.resetUserInputs}>
-                <i className="fas fa-save"></i>
-                Reset
-              </button>
-              <button type="submit">
-                <i className="fas fa-save"></i>
-                Update Details
-              </button>
-            </div>
-            <img
-              alt="Hospital"
-              src={this.state.picture}
-              style={{ width: "50%" }}
-            />
-          </form>
         </div>
       </div>
     );

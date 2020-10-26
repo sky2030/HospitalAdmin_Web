@@ -120,16 +120,16 @@ class Editdepartment extends React.Component {
         },
       })
         .then((response) => {
-          if (response.code === 200) {
-            alert(response.message);
-            console.log("Data has been sent to the server successfully");
+          console.log("Response: " + JSON.stringify(response.data.code));
+          if (response.data.code === 200) {
+            alert(`${response.data.message} : ${this.state.departmentname} Updated Successfully `);
+            this.resetUserInputs();
+            this.setState({
+              submitted: true,
+            });
           } else {
-            console.log(response.message);
+            alert(`Failure: Try again Adding ${this.state.departmentname} `);
           }
-          this.resetUserInputs();
-          this.setState({
-            submitted: true,
-          });
         })
         .catch(() => {
           console.log("internal server error");
@@ -155,13 +155,17 @@ class Editdepartment extends React.Component {
           Authorization: localStorage.getItem("token"),
         },
       })
-        .then(() => {
-          console.log("Data has been sent to the server successfully");
-          console.log(this.state.picture);
-          this.resetUserInputs();
-          this.setState({
-            submitted: true,
-          });
+        .then((response) => {
+          console.log("Response: " + JSON.stringify(response.data.code));
+          if (response.data.code === 200) {
+            alert(`${this.state.departmentname} ${response.data.message}`);
+            this.resetUserInputs();
+            this.setState({
+              submitted: true,
+            });
+          } else {
+            alert(`Failure: Try again Updating ${this.state.departmentname} `);
+          }
         })
         .catch(() => {
           console.log("internal server error");

@@ -165,16 +165,21 @@ class Updatehospitaldetails extends React.Component {
         Authorization: localStorage.getItem("token"),
       },
     })
-      .then(() => {
-        console.log("Data has been sent to the server successfully");
-        console.log(this.state.picture);
-        this.resetUserInputs();
+      .then((response) => {
+        if (response.data.code === 200) {
+          alert(response.data.message)
+          this.resetUserInputs();
+          this.setState({
+            submitted: true,
+          });
+        }
+        else {
+          alert(response.data.message);
+        }
 
-        this.setState({
-          submitted: true,
-        });
       })
-      .catch(() => {
+      .catch((Error) => {
+        alert(Error)
         console.log("internal server error");
       });
     //}

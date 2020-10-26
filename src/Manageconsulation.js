@@ -155,6 +155,7 @@ class Manageconsulation extends React.Component {
     )
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         if (data.code === 200) {
           console.log("Slot has been Created Successfully");
           alert(data.message);

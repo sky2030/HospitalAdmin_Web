@@ -181,18 +181,21 @@ class Adddoctor extends React.Component {
         },
       })
         .then((response) => {
-          if (response.code === 200) {
-            alert(response.message);
+          if (response.data.code === 200) {
+            alert(response.data.message);
             console.log("Data has been sent to the server successfully");
+            this.resetUserInputs();
+            this.setState({
+              submitted: true,
+            });
           } else {
-            console.log(response.message);
+            alert(response.data.message);
+            console.log(response.data.message);
           }
-          this.resetUserInputs();
-          this.setState({
-            submitted: true,
-          });
+
         })
-        .catch(() => {
+        .catch((Error) => {
+          alert(Error);
           console.log("internal server error");
         });
     }
@@ -244,15 +247,23 @@ class Adddoctor extends React.Component {
           Authorization: localStorage.getItem("token"),
         },
       })
-        .then(() => {
-          console.log("Data has been sent to the server successfully");
-          console.log(this.state.picture);
-          this.resetUserInputs();
-          this.setState({
-            submitted: true,
-          });
+        .then((response) => {
+          console.log(response.data.message + response.data.code);
+          if (response.data.code === 200) {
+            alert("Success: " + response.data.message);
+            console.log("Data has been sent to the server successfully");  
+            this.resetUserInputs();
+            this.setState({
+              submitted: true,
+            });
+          } else {
+            alert("Error: " + response.data.message);
+            console.log(response.data.message);
+          }
+
         })
-        .catch(() => {
+        .catch((Error) => {
+          alert(Error);
           console.log("internal server error");
         });
     }

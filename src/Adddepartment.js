@@ -41,7 +41,7 @@ class Adddepartment extends React.Component {
     return true;
   };
 
-   SubmitDepartment = (event) => {
+  SubmitDepartment = (event) => {
     event.preventDefault();
     const {
       departmentname,
@@ -64,18 +64,19 @@ class Adddepartment extends React.Component {
         },
       })
         .then((response) => {
-          if (response.code === 200) {
-            alert(response.message);
+          if (response.data.data.department.departmentname === this.state.departmentname) {
+            alert(`Success: ${this.state.departmentname} added Successfully `);
             console.log("Data has been sent to the server successfully");
+            this.resetUserInputs();
+            this.setState({
+              submitted: true,
+            });
           } else {
-            console.log(response.message);
+            alert(`Failure: Try again Adding ${this.state.departmentname} `);
           }
-          this.resetUserInputs();
-          this.setState({
-            submitted: true,
-          });
         })
-        .catch(() => {
+        .catch((Error) => {
+          alert(Error)
           console.log("internal server error");
         });
     }
@@ -84,14 +85,16 @@ class Adddepartment extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
+    //const isValid = this.validate();
+    // if (isValid) {
+    const payload = {
+      departmentname: this.state.departmentname,
+      deptcode: this.state.deptcode,
+      description: this.state.description,
+      picture: this.state.picture,
+    };
     const isValid = this.validate();
     if (isValid) {
-      const payload = {
-        departmentname: this.state.departmentname,
-        deptcode: this.state.deptcode,
-        description: this.state.description,
-        picture: this.state.picture,
-      };
       axios({
         url: "https://stage.mconnecthealth.com/v1/hospital/department/add",
         method: "POST",
@@ -100,15 +103,21 @@ class Adddepartment extends React.Component {
           Authorization: localStorage.getItem("token"),
         },
       })
-        .then(() => {
-          console.log("Data has been sent to the server successfully");
-          console.log(this.state.picture);
-          this.resetUserInputs();
-          this.setState({
-            submitted: true,
-          });
+        .then((response) => {
+          console.log("Response: " + JSON.stringify(response.data.code));
+          if (response.data.code === 200) {
+            alert(`${response.data.message} : ${this.state.departmentname} added Successfully `);
+            console.log("Data has been sent to the server successfully");
+            this.resetUserInputs();
+            this.setState({
+              submitted: true,
+            });
+          } else {
+            alert(`Failure: Try again Adding ${this.state.departmentname} `);
+          }
         })
-        .catch(() => {
+        .catch((Error) => {
+          alert(Error)
           console.log("internal server error");
         });
     }
@@ -119,22 +128,24 @@ class Adddepartment extends React.Component {
     this.setState({ [name]: value });
   };
 
+
+
   onFileHandler = async (event) => {
     await this.setState({
       picture: event.target.files[0],
       loaded: 0,
     });
-    console.log(this.state.picture);
+   // console.log(this.state.picture);
   };
 
-  onChangeHandler = (event) => {
+  onChangeHandler = async (event) => {
     console.log("file to upload:", event.target.files[0]);
 
     this.getBase64(event.target.files[0], (result) => {
       this.setState({
         picture: result,
       });
-      console.log(result);
+    //  console.log(result);
     });
   };
 
@@ -182,7 +193,7 @@ class Adddepartment extends React.Component {
 
   resetUserInputs = () => {
     this.setState(initialState);
-  
+
   };
   render() {
     if (this.state.submitted) {
@@ -214,7 +225,7 @@ class Adddepartment extends React.Component {
                 {this.state.departmentnameError}
               </div>
             </div>
-           
+
             <div className="row">
               <label> Description:</label>
               <input

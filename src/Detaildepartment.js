@@ -49,12 +49,17 @@ class Detaildepartment extends React.Component {
       // axios.get('https://stage.mconnecthealth.com/saket_Hospital')
       .then((response) => {
         console.log(response);
-        const data = response.data.data;
-        this.setState({ post: data });
-        console.log("Data has been received!!");
+        if (response.data.code == 200) {
+          const data = response.data.data;
+          this.setState({ post: data });
+          console.log("Data has been received!!");
+        } else {
+          alert(response.data.message)
+        }
+
       })
-      .catch(() => {
-        alert("Error retrieving data!!");
+      .catch((Error) => {
+        alert(Error);
       });
   };
 
@@ -69,37 +74,25 @@ class Detaildepartment extends React.Component {
         Authorization: localStorage.getItem("token"),
       },
     })
-      .then((data) => {
-        alert("Department has been deleted");
-        //console.log('Department has been deleted')
-        this.setState({
-          submitted: true,
-        });
+      .then((response) => {
+        if (response.data.code == 200) {
+          alert(response.data.message);
+          //console.log('Department has been deleted')
+          this.setState({
+            submitted: true,
+          });
+        } else {
+          alert(response.data.message);
+        }
+
       })
       .catch(() => {
         console.log("internal server error");
       });
-    //}
+
   };
 
-  // DeleteDept = () => {
-  // 	console.log("delete initiated")
-  // 	axios({
-  // 		url: `https://stage.mconnecthealth.com/v1/hospital/departments/${this.state.id}`,
-  // 		method: 'Delete',
-  // 		headers: {
-  // 			'Authorization': localStorage.getItem("token")
-  // 		}
-  // 	})
-  // 		.then(res => res.json())
-  // 		.then(deletedEmp => {
-  // 			console.log(`${this.state.departmentname} deleted`)
 
-  // 		})
-  // 		.catch(err => {
-  // 			console.log("something went wrong")
-  // 		})
-  // }
   render() {
     //const { departmentname, picture, description } = this.state
     if (this.state.submitted) {

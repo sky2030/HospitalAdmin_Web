@@ -232,11 +232,11 @@ class UpdateDoctorProfile extends React.Component {
         },
       })
         .then((response) => {
-          if (response.code === 200) {
-            alert(response.message);
+          if (response.data.code === 200) {
+            alert(response.data.message);
             console.log("Data has been sent to the server successfully");
           } else {
-            console.log(response.message);
+            console.log(response.data.message);
           }
           this.resetUserInputs();
           this.setState({
@@ -282,16 +282,21 @@ class UpdateDoctorProfile extends React.Component {
           Authorization: localStorage.getItem("token"),
         },
       })
-        .then(() => {
-          console.log("Data has been sent to the server successfully");
-          //console.log(this.state.picture);
-          alert("Doctor has been Updated");
-          this.resetUserInputs();
-          this.setState({
-            submitted: true,
-          });
+        .then((response) => {
+          if (response.data.code === 200) {
+            alert("Success: " + response.data.message);
+            console.log("Data has been sent to the server successfully");
+            this.resetUserInputs();
+            this.setState({
+              submitted: true,
+            });
+          } else {
+            alert("Error: " + response.data.message);
+            console.log(response.data.message);
+          }
         })
-        .catch(() => {
+        .catch((Error) => {
+          alert(Error)
           console.log("internal server error");
         });
     }

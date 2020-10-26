@@ -66,22 +66,23 @@ class HospitalSpeciality extends React.Component {
           this.setState({
             submitted: true,
           });
-          alert("Speciality has been Deleted Successfully");
+          alert(data.data.message);
         } else {
-          alert("Something Went Wrong");
+          alert(data.data.message);
         }
       })
-      .catch(() => {
-        console.log("internal server error");
+      .catch((Error) => {
+        console.log(Error);
       });
-    //}
+
+
   };
 
   render() {
     if (localStorage.getItem("token") == null) {
       return <Redirect to="/" />;
     }
-  
+
     const { posts } = this.state;
 
     const BASE = "https://stage.mconnecthealth.com";

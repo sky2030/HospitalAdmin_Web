@@ -79,7 +79,8 @@ class AddSpecialities extends React.Component {
             alert(response.message);
           }
         })
-        .catch(() => {
+        .catch((Error) => {
+          alert(Error);
           console.log("internal server error");
         });
     }

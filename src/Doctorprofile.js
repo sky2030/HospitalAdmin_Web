@@ -50,12 +50,17 @@ class Doctorprofile extends React.Component {
       // axios.get('https://stage.mconnecthealth.com/saket_Hospital')
       .then((response) => {
         console.log(response);
-        const data = response.data.data;
-        this.setState({ post: data });
-        console.log("Data has been received!!");
+        if (response.data.code === 200) {
+          const data = response.data.data;
+          this.setState({ post: data });
+          console.log("Data has been received!!");
+        } else {
+          alert(response.data.message)
+        }
+
       })
-      .catch(() => {
-        alert("Error retrieving data!!");
+      .catch((Error) => {
+        alert(Error);
       });
   };
 
@@ -68,16 +73,18 @@ class Doctorprofile extends React.Component {
       },
     })
       .then((data) => {
+        console.log(data.data.code);
         if (data.data.code === 200) {
           this.setState({
             submitted: true,
           });
-          alert("Doctor has been Deleted Successfully");
+          alert(data.data.message);
         } else {
-          alert("Something Went Wrong");
+          alert(data.data.message);
         }
       })
-      .catch(() => {
+      .catch((Error) => {
+        alert(Error);
         console.log("internal server error");
       });
     //}

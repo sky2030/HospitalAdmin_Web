@@ -58,14 +58,21 @@ class Adddoctorfee extends React.Component {
           Authorization: localStorage.getItem("token"),
         },
       })
-        .then(() => {
-          console.log("Data has been sent to the server successfully");
-          this.resetUserInputs();
-          this.setState({
-            submitted: true,
-          });
+        .then((response) => {
+          if (response.data.code === 200) {
+            alert(response.data.message)
+            console.log("Data has been sent to the server successfully");
+            this.resetUserInputs();
+            this.setState({
+              submitted: true,
+            });
+          } else {
+            alert(response.data.message)
+          }
+
         })
-        .catch(() => {
+        .catch((Error) => {
+          alert(Error);
           console.log("internal server error");
         });
     }

@@ -13,10 +13,20 @@ const initialState = {
   followupfee: "",
   consultationError: "",
   submitted: false,
+  loggedIn: true,
+  consultation: "",
+  ewsfee: "",
+  followupdays: "",
+  followupfee: ""
 };
 
 class Adddoctorfee extends React.Component {
   state = initialState;
+
+  constructor(props) {
+    super(props);
+
+  }
 
   validate = () => {
     let consultationError = "";
@@ -24,13 +34,6 @@ class Adddoctorfee extends React.Component {
     if (!this.state.consultation) {
       consultationError = "****Consultation Fees cannot be blank";
     }
-
-    // if (!this.state.email.includes("@")) {
-    //   emailError = "****Invalid Email";
-    // }
-    // if (!this.state.phone) {
-    //   phoneError = "****Phone number cannot be blank";
-    // }
 
     if (consultationError) {
       this.setState({ consultationError });
@@ -40,16 +43,120 @@ class Adddoctorfee extends React.Component {
     return true;
   };
 
-  handleSubmit = (event) => {
+  componentDidMount = () => {
+    console.log(`This is Hospital ID ${this.props.match.params.id}`);
+    this.getDoctor();
+    //  this.setState({hospital: this.props.match.params});
+    //  console.log(`This is Hospital Name ${this.props.match.params.hospitalname}`)
+  };
+
+  getDoctor = () => {
+    axios
+      .get(
+        `https://stage.mconnecthealth.com/v1/hospital/doctors/` +
+        this.props.match.params.id,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+        const data = response.data.data;
+        this.setState({
+          consultation: data.consultation,
+          ewsfee: data.ewsfee,
+          followupdays: data.followupdays,
+          followupfee: data.followupfee,
+          id: data._id,
+        });
+        console.log("Data has been received!!");
+      })
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
+      });
+  };
+
+  SubmitFees = (event) => {
     event.preventDefault();
+    const {
+      consultation,
+    } = this.state;
     const isValid = this.validate();
     if (isValid) {
-      const payload = {
-        consultation: this.state.consultation,
-        ewsfee: this.state.ewsfee,
-        followupdays: this.state.followupdays,
-        followupfee: this.state.followupfee,
-      };
+      const payload = new FormData();
+      payload.append("consultation", consultation);
+      axios({
+        url: `https://stage.mconnecthealth.com/v1/hospital/doctorfee/${this.props.match.params.id}`,
+        method: "POST",
+        data: payload,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: localStorage.getItem("token"),
+        },
+      })
+        .then((response) => {
+          if (response.data.data.department.consultation === this.state.consultation) {
+            alert(`Success: ${this.state.consultation} added Successfully `);
+            console.log("Data has been sent to the server successfully");
+            this.resetUserInputs();
+            this.setState({
+              submitted: true,
+            });
+          } else {
+            alert(`Failure: Try again Adding ${this.state.consultation} `);
+          }
+        })
+        .catch((Error) => {
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
+        });
+    }
+  };
+
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+    // const isValid = this.validate();
+    // if (isValid) {
+    const payload = {
+      consultation: this.state.consultation,
+      ewsfee: this.state.ewsfee,
+      followupdays: this.state.followupdays,
+      followupfee: this.state.followupfee,
+    };
+    const isValid = this.validate();
+    if (isValid) {
       axios({
         url: `https://stage.mconnecthealth.com/v1/hospital/doctorfee/${this.props.match.params.id}`,
         method: "PUT",
@@ -72,8 +179,22 @@ class Adddoctorfee extends React.Component {
 
         })
         .catch((Error) => {
-          alert(Error);
-          console.log("internal server error");
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
   };
@@ -100,6 +221,9 @@ class Adddoctorfee extends React.Component {
     // });
   };
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     const {
       consultation,
       ewsfee,
@@ -145,9 +269,7 @@ class Adddoctorfee extends React.Component {
                 name="ewsfee"
                 onChange={this.handleChange}
               />
-              {/* <div style={{ fontSize: 12, color: "red" }}>
-              {nameError}
-            </div> */}
+
             </div>
             <div className="row">
               <input
@@ -157,9 +279,7 @@ class Adddoctorfee extends React.Component {
                 name="followupdays"
                 onChange={this.handleChange}
               />
-              {/* <div style={{ fontSize: 12, color: "red" }}>
-              {nameError}
-            </div> */}
+
             </div>
             <div className="row">
               <input
@@ -169,9 +289,7 @@ class Adddoctorfee extends React.Component {
                 name="followupfee"
                 onChange={this.handleChange}
               />
-              {/* <div style={{ fontSize: 12, color: "red" }}>
-              {nameError}
-            </div> */}
+
             </div>
 
             <div className="btncontainer">

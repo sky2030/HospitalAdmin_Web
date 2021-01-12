@@ -36,7 +36,7 @@ class Updatehospitaldetails extends React.Component {
   }
   componentDidMount = () => {
     this.getHospital();
-    
+
   };
 
   getHospital = () => {
@@ -61,7 +61,7 @@ class Updatehospitaldetails extends React.Component {
 
         console.log("Data has been received!!");
       })
-      .catch(() => {
+      .catch((error) => {
         alert("Error retrieving data!!");
       });
   };
@@ -100,16 +100,16 @@ class Updatehospitaldetails extends React.Component {
     return true;
   };
 
-   UpdateHospital = (event) => {
-     event.preventDefault();     
+  UpdateHospital = (event) => {
+    event.preventDefault();
     const {
       email,
       phone,
       emergencyNo,
       emergencyDetail,
       picture
-     } = this.state;
-      
+    } = this.state;
+
     const isValid = this.validate();
     if (isValid) {
       const payload = new FormData();
@@ -139,8 +139,23 @@ class Updatehospitaldetails extends React.Component {
             submitted: true,
           });
         })
-        .catch(() => {
-          console.log("internal server error");
+        .catch((Error) => {
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
   };
@@ -179,8 +194,22 @@ class Updatehospitaldetails extends React.Component {
 
       })
       .catch((Error) => {
-        alert(Error)
-        console.log("internal server error");
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
     //}
   };
@@ -208,7 +237,7 @@ class Updatehospitaldetails extends React.Component {
       console.log(result);
     });
 
- 
+
   };
 
   getBase64(file, cb) {
@@ -252,8 +281,23 @@ class Updatehospitaldetails extends React.Component {
         });
         console.log(this.state.picture);
       })
-      .catch((err) => {
-        console.log("error while uploading" + err);
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -267,6 +311,9 @@ class Updatehospitaldetails extends React.Component {
     });
   };
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     const { email, phone, emergencyDetail, emergencyNo } = this.state;
 
     if (this.state.submitted) {

@@ -44,7 +44,7 @@ class UpdateDoctorProfile extends React.Component {
       designationError: "",
       specialitiesError: "",
       deptError: "",
-      
+
       passwordError: "",
       selectedFile: null,
       submitted: false,
@@ -62,7 +62,7 @@ class UpdateDoctorProfile extends React.Component {
     axios
       .get(
         `https://stage.mconnecthealth.com/v1/hospital/doctors/` +
-          this.props.match.params.id,
+        this.props.match.params.id,
         {
           headers: {
             Authorization: localStorage.getItem("token"),
@@ -92,12 +92,27 @@ class UpdateDoctorProfile extends React.Component {
         });
         console.log("Data has been received!!");
       })
-      .catch(() => {
-        alert("Error retrieving data!!");
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
- 
+
   validate = () => {
     let deptError = "";
     let emailError = "";
@@ -221,7 +236,7 @@ class UpdateDoctorProfile extends React.Component {
       payload.append("department", department);
       payload.append("deptcode", deptcode);
       payload.append("specialities", specialities);
-      
+
       axios({
         url: `https://stage.mconnecthealth.com/v1/hospital/doctors/${this.state.id}`,
         method: "PUT",
@@ -234,6 +249,7 @@ class UpdateDoctorProfile extends React.Component {
         .then((response) => {
           if (response.data.code === 200) {
             alert(response.data.message);
+
             console.log("Data has been sent to the server successfully");
           } else {
             console.log(response.data.message);
@@ -242,9 +258,25 @@ class UpdateDoctorProfile extends React.Component {
           this.setState({
             submitted: true,
           });
+
         })
-        .catch(() => {
-          console.log("internal server error");
+        .catch((Error) => {
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
   };
@@ -296,8 +328,22 @@ class UpdateDoctorProfile extends React.Component {
           }
         })
         .catch((Error) => {
-          alert(Error)
-          console.log("internal server error");
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
   };
@@ -307,7 +353,7 @@ class UpdateDoctorProfile extends React.Component {
     this.setState({ [name]: value });
   };
 
- onFileHandler = async (event) => {
+  onFileHandler = async (event) => {
     await this.setState({
       picture: event.target.files[0],
       loaded: 0,
@@ -376,8 +422,23 @@ class UpdateDoctorProfile extends React.Component {
         });
         //console.log(this.state.picture);
       })
-      .catch((err) => {
-        console.log("error while uploading" + err);
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -399,6 +460,9 @@ class UpdateDoctorProfile extends React.Component {
     });
   };
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     const {
       first_name,
       last_name,

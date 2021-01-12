@@ -10,7 +10,7 @@ import Spinner from "./img/Spinnergrey.gif";
 //import Spinner from "./img/Spinner.gif";
 // import Adddoctor from './Adddoctor';
 
- const BASE = "https://stage.mconnecthealth.com";
+const BASE = "https://stage.mconnecthealth.com";
 
 
 class Doctorlist extends React.Component {
@@ -52,10 +52,25 @@ class Doctorlist extends React.Component {
           console.log("Data has been received!!");
         } else {
           alert(response.data.message)
-        }        
+        }
       })
       .catch((Error) => {
-        alert(Error);
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -65,11 +80,15 @@ class Doctorlist extends React.Component {
     const postList = posts.length ? (
       posts.map((post) => {
         return (
-          <div key={post._id} className="doctor-card col">
-            <Link to={"/Doctorprofile/" + post._id}>
-              <h3 style={{ color: "white" }}>
-                Dr. {post.first_name} {post.last_name}
-              </h3>
+          <Link to={"/Doctorprofile/" + post._id} key={post._id} className="doctor-card col">
+
+            <h3 style={{ color: "white" }}>
+              Dr. {post.first_name} {post.last_name}
+            </h3>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'row'
+            }}>
               <div className="doctorpic">
                 <img
                   src={post.picture === "" ? docicon : post.picture}
@@ -90,22 +109,23 @@ class Doctorlist extends React.Component {
                 <p>Rs. : {post.consultation}</p>
                 <p>{post.designation}</p>
               </div>
-            </Link>
-          </div>
+            </div>
+
+          </Link>
         );
       })
     ) : (
-      <div
-        className="center"
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "50px",
-        }}
-      >
-        <img src={Spinner} alt="Loading" />
-      </div>
-    );
+        <div
+          className="center"
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "50px",
+          }}
+        >
+          <img src={Spinner} alt="Loading" />
+        </div>
+      );
 
     if (this.state.loggedIn === false) {
       return <Redirect to="/" />;

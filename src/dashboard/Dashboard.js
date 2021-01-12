@@ -21,6 +21,9 @@ class Dashboard extends React.Component {
     };
   }
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     if (localStorage.getItem("token") == null) {
       return <Redirect to="/" />;
     }

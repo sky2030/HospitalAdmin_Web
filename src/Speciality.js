@@ -1,9 +1,6 @@
 import React from "react";
 import Navigation from "./Nav";
 import "./dashboard/dashboard.css";
-//import addicon from "./img/add.png";
-//import Arthroscopy from "./img/Arthroscopy.jpg";
-//import Surgery_Dental from "./img/Surgery_Dental.jpg";
 import { Link, Redirect } from "react-router-dom";
 //import axios from "axios";
 
@@ -24,8 +21,16 @@ class Speciality extends React.Component {
 
   constructor(props) {
     super(props);
+    const token = localStorage.getItem("token");
+
+    let loggedIn = true;
+    if (token == null) {
+      loggedIn = false;
+    }
+
     this.state = {
       posts: {},
+      loggedIn,
     };
   }
 
@@ -37,6 +42,9 @@ class Speciality extends React.Component {
   }
 
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     if (localStorage.getItem("token") == null) {
       return <Redirect to="/" />;
     }

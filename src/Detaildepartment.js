@@ -5,12 +5,12 @@ import "./dashboard/dashboard.css";
 //import nerology from './img/Nerology.png';
 //import dentist1 from './img/dentist1.png';
 //import cardio from './img/cardio.png';
-//import addicon from './img/add.png';
+import deptdefault from "./img/department.png";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 
- const BASE = "https://stage.mconnecthealth.com";
+const BASE = "https://stage.mconnecthealth.com";
 
 class Detaildepartment extends React.Component {
   constructor(props) {
@@ -39,7 +39,7 @@ class Detaildepartment extends React.Component {
     axios
       .get(
         "https://stage.mconnecthealth.com/v1/hospital/departments/" +
-          this.props.match.params.id,
+        this.props.match.params.id,
         {
           headers: {
             Authorization: localStorage.getItem("token"),
@@ -59,7 +59,22 @@ class Detaildepartment extends React.Component {
 
       })
       .catch((Error) => {
-        alert(Error);
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -86,14 +101,32 @@ class Detaildepartment extends React.Component {
         }
 
       })
-      .catch(() => {
-        console.log("internal server error");
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
 
   };
 
 
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     //const { departmentname, picture, description } = this.state
     if (this.state.submitted) {
       return <Redirect to="/Alldepartment" />;
@@ -115,7 +148,7 @@ class Detaildepartment extends React.Component {
           </div>
           <h2>Department Details</h2>
 
-          <img src={post.picture} alt="Neorology" />
+          <img src={post.picture === "" ? deptdefault : post.picture} alt="Department" />
           <h3>{post.departmentname}</h3>
           {/* <p>{post.deptcode}</p> */}
           <div className="detlspage">

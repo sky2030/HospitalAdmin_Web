@@ -15,10 +15,20 @@ const initialState = {
   titleError: "",
   descriptionError: "",
   submitted: false,
+  loggedIn: true
 };
 
 class AddSpecialities extends React.Component {
   state = initialState;
+
+  constructor(props) {
+    super(props);
+
+
+    // this.state = {
+    //   loggedIn,
+    // }
+  }
 
   validate = () => {
     let titleError = "";
@@ -80,8 +90,22 @@ class AddSpecialities extends React.Component {
           }
         })
         .catch((Error) => {
-          alert(Error);
-          console.log("internal server error");
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
   };
@@ -147,8 +171,23 @@ class AddSpecialities extends React.Component {
         });
         console.log(this.state.picture);
       })
-      .catch((err) => {
-        console.log("error while uploading" + err);
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -169,6 +208,9 @@ class AddSpecialities extends React.Component {
     // });
   };
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     if (this.state.submitted) {
       return <Redirect to="/HospitalSpeciality" />;
     }
@@ -235,11 +277,7 @@ class AddSpecialities extends React.Component {
                 <i className="fas fa-save"></i>Save
               </button>
             </div>
-            <img
-              alt="Speciality"
-              src={this.state.picture}
-              style={{ width: "50%" }}
-            />
+
           </form>
         </div>
       </div>

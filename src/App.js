@@ -21,6 +21,7 @@ import Login from "./Login";
 import HospitalSpeciality from "./HospitalSpeciality";
 import AddSpecialities from "./AddSpecialities";
 import Speciality from "./Speciality";
+import ForgetPassword from './ForgetPassword'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
           <Route path="/Manageconsulation/:id" component={Manageconsulation} />
           <Route path="/Myhospital" component={Myhospital} />
           <Route path="/Speciality" component={Speciality} />
+          <Route path="/ForgetPassword" component={ForgetPassword} />
           <Route
             path="/Updatehospitaldetails"
             component={Updatehospitaldetails}

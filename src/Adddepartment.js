@@ -16,10 +16,16 @@ const initialState = {
   descriptionError: "",
   selectedFile: null,
   submitted: false,
+  loggedIn: true
 };
 
 class Adddepartment extends React.Component {
   state = initialState;
+
+  constructor(props) {
+    super(props);
+
+  }
 
   validate = () => {
     let departmentnameError = "";
@@ -76,8 +82,22 @@ class Adddepartment extends React.Component {
           }
         })
         .catch((Error) => {
-          alert(Error)
-          console.log("internal server error");
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
   };
@@ -117,8 +137,22 @@ class Adddepartment extends React.Component {
           }
         })
         .catch((Error) => {
-          alert(Error)
-          console.log("internal server error");
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
   };
@@ -135,7 +169,7 @@ class Adddepartment extends React.Component {
       picture: event.target.files[0],
       loaded: 0,
     });
-   // console.log(this.state.picture);
+    // console.log(this.state.picture);
   };
 
   onChangeHandler = async (event) => {
@@ -145,7 +179,7 @@ class Adddepartment extends React.Component {
       this.setState({
         picture: result,
       });
-    //  console.log(result);
+      //  console.log(result);
     });
   };
 
@@ -186,8 +220,23 @@ class Adddepartment extends React.Component {
         });
         console.log(this.state.picture);
       })
-      .catch((err) => {
-        console.log("error while uploading" + err);
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -198,6 +247,9 @@ class Adddepartment extends React.Component {
   render() {
     if (this.state.submitted) {
       return <Redirect to="/Alldepartment" />;
+    }
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
     }
     return (
       <div className="Appcontainer">
@@ -258,11 +310,11 @@ class Adddepartment extends React.Component {
                 <i className="fas fa-save"></i>Save
               </button>
             </div>
-            <img
+            {/* <img
               alt="Department"
               src={this.state.picture}
               style={{ width: "50%" }}
-            />
+            /> */}
           </form>
         </div>
       </div>

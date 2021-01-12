@@ -41,7 +41,22 @@ class Myhospital extends React.Component {
         }
       })
       .catch((Error) => {
-        alert(Error);
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -51,61 +66,57 @@ class Myhospital extends React.Component {
     if (this.state.loggedIn === false) {
       return <Redirect to="/" />;
     }
+
     return (
       <div className="Appcontainer">
         <Navigation />
-        <div className="dashboard_wrap">
-          <div className="headeralign">
-            <div className="banner-text">
-              <img
-                style={{
-                  width: "100%",
-                  height: "50vh",
-                  borderRadius: "2rem",
-                  marginTop: "2rem",
-                }}
-                src={hospitals.picture}
-                alt="hospital_img"
-              />
+        <div className="dashboard_wrap2">
+
+          <div className="banner-text">
+            <img
+              src={hospitals.picture}
+              alt="hospital Image"
+            />
+          </div>
+          <div className="flex-container scroll">
+            <div className="col5 box-shad">
+              <h3>{hospitals.hospitalname}</h3>
+              <p>
+                <i className="far fa-envelope"></i> {hospitals.email}
+              </p>
+              <p>
+                <i className="fas fa-phone-alt"></i> {hospitals.phone}
+              </p>
+              <p>
+                <i className="fas fa-phone-alt"></i> {hospitals.emergencyNo}
+              </p>
             </div>
-            <div className="flex-container scroll">
-              <div className="col5 box-shad">
-                <h3>{hospitals.hospitalname}</h3>
-                <p>
-                  <i className="far fa-envelope"></i> {hospitals.email}
-                </p>
-                <p>
-                  <i className="fas fa-phone-alt"></i> {hospitals.phone}
-                </p>
-                <p>
-                  <i className="fas fa-phone-alt"></i> {hospitals.emergencyNo}
-                </p>
-              </div>
-              <div className="col5 box-shad">
-                <h3>
-                  <i className="fas fa-map-marker-alt"></i>Address
+            <div className="col5 box-shad">
+              <h3>
+                <i className="fas fa-map-marker-alt"></i>Address
                 </h3>
-                <p>
-                  <b>Place:</b> {hospitals.place}
-                </p>
-                <p>
-                  <b>Landmark:</b> {hospitals.landmark}
-                </p>
-                <p>
-                  <b>District:</b> {hospitals.city}
-                </p>
-                <p>
-                  <b>State:</b> {hospitals.state} <b>Pin Code:</b>{" "}
-                  {hospitals.pincode}
-                </p>
-              </div>
+              <p>
+                <b>Place:</b> {hospitals.place}
+              </p>
+              <p>
+                <b>Landmark:</b> {hospitals.landmark}
+              </p>
+              <p>
+                <b>District:</b> {hospitals.city}
+              </p>
+              <p>
+                <b>State:</b> {hospitals.state} <b>Pin Code:</b>{" "}
+                {hospitals.pincode}
+              </p>
             </div>
+
           </div>
-          <div className="add_departmet">
-            <Link to="/Updatehospitaldetails">
-              <i className="far fa-edit"></i> Update Details{" "}
-            </Link>
-          </div>
+
+        </div>
+        <div className="add_departmet">
+          <Link to="/Updatehospitaldetails">
+            <i className="far fa-edit"></i> Update Details{" "}
+          </Link>
         </div>
       </div>
     );

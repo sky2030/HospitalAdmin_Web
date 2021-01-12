@@ -39,10 +39,18 @@ const initialState = {
   posts: [],
   Male: "Male",
   Female: "Female",
+  loggedIn: true
 };
 
 class Adddoctor extends React.Component {
   state = initialState;
+
+  constructor(props) {
+    super(props);
+    const token = localStorage.getItem("token");
+
+
+  }
 
   validate = () => {
     let deptError = "";
@@ -170,7 +178,7 @@ class Adddoctor extends React.Component {
       payload.append("designation", designation);
       payload.append("deptcode", deptcode);
       payload.append("specialities", specialities);
-      
+
       axios({
         url: "https://stage.mconnecthealth.com/v1/hospital/doctors/add",
         method: "POST",
@@ -195,8 +203,22 @@ class Adddoctor extends React.Component {
 
         })
         .catch((Error) => {
-          alert(Error);
-          console.log("internal server error");
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
   };
@@ -251,7 +273,7 @@ class Adddoctor extends React.Component {
           console.log(response.data.message + response.data.code);
           if (response.data.code === 200) {
             alert("Success: " + response.data.message);
-            console.log("Data has been sent to the server successfully");  
+            console.log("Data has been sent to the server successfully");
             this.resetUserInputs();
             this.setState({
               submitted: true,
@@ -263,8 +285,22 @@ class Adddoctor extends React.Component {
 
         })
         .catch((Error) => {
-          alert(Error);
-          console.log("internal server error");
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
   };
@@ -288,8 +324,23 @@ class Adddoctor extends React.Component {
         this.setState({ posts: data });
         console.log("Data has been received!!");
       })
-      .catch(() => {
-        alert("Error retrieving data!!");
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -308,6 +359,7 @@ class Adddoctor extends React.Component {
     this.setState({
       deptcode: e.target.value,
     });
+    console.log(e.target.value)
   };
 
   handleGender = (e) => {
@@ -385,8 +437,23 @@ class Adddoctor extends React.Component {
         });
         console.log(this.state.picture);
       })
-      .catch((err) => {
-        console.log("error while uploading" + err);
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -407,6 +474,9 @@ class Adddoctor extends React.Component {
     // });
   };
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     const {
       posts,
       first_name,
@@ -427,10 +497,17 @@ class Adddoctor extends React.Component {
       Male,
       Female,
     } = this.state;
-   
 
-    const deptcodelist = posts.length ? (
-      posts.map((item) => {
+    let alldeptjson = [
+      {
+        _id: "alldept",
+        departmentname: "Select Department",
+      },
+    ];
+
+    alldeptjson = alldeptjson.concat([...posts]);
+    const deptcodelist = alldeptjson.length ? (
+      alldeptjson.map((item) => {
         return (
           <option key={item._id} value={item.deptcode}>
             {item.departmentname}
@@ -534,7 +611,9 @@ class Adddoctor extends React.Component {
             </div>
           </div> */}
             <div className="row">
-              <select onChange={this.handledeptcode}>{deptcodelist}</select>
+              <select onChange={this.handledeptcode}>
+                {deptcodelist}
+              </select>
               <div style={{ fontSize: 12, color: "red" }}>
                 {this.state.deptError}
               </div>

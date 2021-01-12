@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 
- const BASE = "https://stage.mconnecthealth.com";
+const BASE = "https://stage.mconnecthealth.com";
 
 
 class Doctorprofile extends React.Component {
@@ -40,7 +40,7 @@ class Doctorprofile extends React.Component {
     axios
       .get(
         `https://stage.mconnecthealth.com/v1/hospital/doctors/` +
-          this.props.match.params.id,
+        this.props.match.params.id,
         {
           headers: {
             Authorization: localStorage.getItem("token"),
@@ -60,7 +60,22 @@ class Doctorprofile extends React.Component {
 
       })
       .catch((Error) => {
-        alert(Error);
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -84,8 +99,22 @@ class Doctorprofile extends React.Component {
         }
       })
       .catch((Error) => {
-        alert(Error);
-        console.log("internal server error");
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
     //}
   };

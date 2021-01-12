@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from "styled-components";
 import { useSpring, animated, config } from "react-spring";
-
 import Brand from "./Brand";
 import BurgerMenu from "./BurgerMenu";
 import CollapseMenu from "./CollapseMenu";
@@ -32,17 +31,17 @@ const Navbar = (props) => {
           </NavLinks>
           <BurgerWrapper>
             <BurgerMenu
-              navbarState={props.navbarState} 
+              navbarState={props.navbarState}
               handleNavbar={props.handleNavbar}
             />
           </BurgerWrapper>
         </FlexContainer>
       </NavBar>
-      <CollapseMenu 
-        navbarState={props.navbarState} 
+      <CollapseMenu
+        navbarState={props.navbarState}
         handleNavbar={props.handleNavbar}
       />
-   </>
+    </>
   )
 }
 
@@ -92,7 +91,7 @@ const NavLinks = styled(animated.ul)`
     }
   }
 `;
- 
+
 const BurgerWrapper = styled.div`
   margin: auto 0;
 

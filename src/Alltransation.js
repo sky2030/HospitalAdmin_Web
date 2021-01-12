@@ -9,12 +9,24 @@ import axios from "axios";
 import moment from "moment-timezone";
 import Spinner from "./img/Spinnergrey.gif";
 
+const BASE = "https://stage.mconnecthealth.com";
+const BASE_URL = `${BASE}/v1/hospital/`
+
 class Alltransation extends React.Component {
   constructor(props) {
     super(props);
+
+    const token = localStorage.getItem("token");
+
+    let loggedIn = true;
+    if (token == null) {
+      loggedIn = false;
+    }
+
     this.state = {
+      loggedIn,
       posts: [],
-      dup_post:[],
+      dup_post: [],
       doctor: [],
 
     };
@@ -22,11 +34,60 @@ class Alltransation extends React.Component {
 
   componentDidMount = () => {
     this.setState({ doctor: [] })
-    this.setState({status:[]})
+    this.setState({ status: [] })
     this.GetTransactions();
   };
 
-  
+  LoadMoreTransaction = () => {
+    const { posts } = this.state
+
+    //const URL = `${BASE_URL}orders?offset = ${posts.length}`
+    console.log(`${BASE_URL}orders?offset = ${posts.length}`);
+    axios
+      .get(`${BASE_URL}orders?offset=${posts.length}`, {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        if (response.data.code === 200) {
+          const data = response.data.data;
+          if (posts && posts.length > 0) {
+            this.setState({
+              posts: posts.concat(data),
+              dup_post: posts.concat(data)
+            })
+          }
+
+        } else {
+          this.setState({
+            posts: [],
+            dup_post: [],
+          });
+        }
+      })
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+        }
+        else {
+          alert("Something Went Wrong")
+        }
+      });
+  };
+
+
+
 
   GetTransactions = () => {
     axios
@@ -39,133 +100,149 @@ class Alltransation extends React.Component {
         console.log(response);
         if (response.data.code === 200) {
           const data = response.data.data;
-             let dup_doctors = [
-             JSON.stringify({      
-            _id: "alltransaction",
-            name: "All Doctors",
-      })];
-          
-                 
+          let dup_doctors = [
+            JSON.stringify({
+              _id: "alltransaction",
+              name: "All Doctors",
+            })];
+
+
           response.data.data.map(item => {
             let jsonOBJ = {
               _id: item.doctor_id,
-              name:item.doctor_name
+              name: item.doctor_name
             }
             let objString = JSON.stringify(jsonOBJ)
-            let index = dup_doctors.indexOf(objString)            
-           
-              if (index === -1) {
-                  console.log("Push :",index)
+            let index = dup_doctors.indexOf(objString)
+
+            if (index === -1) {
+              console.log("Push :", index)
               dup_doctors.push(objString)
             }
-            
-            
-         })
+
+
+          })
           this.setState({
             doctor: dup_doctors,
-           
-           posts: data,
-          dup_post: data})
-     //   console.log("Data has been received!!" + data);
+
+            posts: data,
+            dup_post: data
+          })
+          //   console.log("Data has been received!!" + data);
         } else {
-          this.setState({ 
-          posts: [],
+          this.setState({
+            posts: [],
             dup_post: [],
             doctor: [],
-           
-        });
-        }        
+
+          });
+        }
       })
-      .catch(() => {
-        alert("Error retrieving data!!");
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
   handleStatus = (e) => {
     console.log("This is status: ", e.target.value);
-      if (e.target.value === "status") {
-    this.setState({
-      posts:this.state.dup_post
-    }) 
-      } else {
-        let filterList = this.state.dup_post.filter(item => {
-          if (item.status === e.target.value) {
-            return item
-          }
-        })
-        this.setState({posts:filterList})   
+    if (e.target.value === "status") {
+      this.setState({
+        posts: this.state.dup_post
+      })
+    } else {
+      let filterList = this.state.dup_post.filter(item => {
+        if (item.status === e.target.value) {
+          return item
+        }
+      })
+      this.setState({ posts: filterList })
     }
-    
+
   }
 
-   handleOnChange = (e) => { 
-   console.log("This is Doctor ID : ", e.target.value);
-      if (e.target.value === "alltransaction") {
-    this.setState({
-      posts:this.state.dup_post
-    }) 
-      } else {
-        let filterList = this.state.dup_post.filter(item => {
-          if (item.doctor_id === e.target.value) {
-            return item
-          }
-        })
-        this.setState({posts:filterList})   
+  handleOnChange = (e) => {
+    console.log("This is Doctor ID : ", e.target.value);
+    if (e.target.value === "alltransaction") {
+      this.setState({
+        posts: this.state.dup_post
+      })
+    } else {
+      let filterList = this.state.dup_post.filter(item => {
+        if (item.doctor_id === e.target.value) {
+          return item
+        }
+      })
+      this.setState({ posts: filterList })
     }
-  
+
   };
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     if (localStorage.getItem("token") === null) {
       return <Redirect to="/" />;
     }
-    const { posts,doctor } = this.state;
+    const { posts, doctor } = this.state;
 
-  
+
     const DoctorList = doctor.length ? (
       doctor.map((item) => {
-      let item_copy = JSON.parse(item)
+        let item_copy = JSON.parse(item)
         return (
           <option key={item_copy._id} value={item_copy._id} >
-           {item_copy.name}
+            {item_copy.name}
           </option>
-        ); 
+        );
       })
     ) : (
-      <div className="center">No Doctor</div>
-    );
+        <div className="center">No Doctor</div>
+      );
 
     const TransactionsList = posts.length ? (
       posts.map((post) => {
         return (
-          <div className="maintrans" key={post.invoice}>
+          <div key={post.invoice}>
             <div className="alltransation">
               <div
-                style={{
-                  marginLeft: "1em",
-                }}
+                className="list"
               >
                 <p>{post.invoice}</p>
               </div>
               <div
-                style={{
-                  marginLeft: "1em",
-                }}
+                className="list"
               >
+
                 <p>{moment(post.date).format("ll")}</p>
               </div>
-              <div>
+              <div className="list">
                 <p>Dr. {post.doctor_name}</p>
               </div>
-              <div>
+              <div className="list">
                 <p>{post.patient_name}</p>
               </div>
-              <div>
+              <div className="list">
                 <p>
                   {" "}
                   {post.amount} {post.currency}
                 </p>
               </div>
-              <div>
+              <div className="list">
                 <p>{post.status} </p>
               </div>
             </div>
@@ -198,9 +275,7 @@ class Alltransation extends React.Component {
           <div className="maintrans">
             <div className="alltransation">
               <div
-                style={{
-                  marginLeft: "1em",
-                }}
+                className="listhead"
               >
                 <p>
                   <b>Invoice No</b>
@@ -208,53 +283,54 @@ class Alltransation extends React.Component {
               </div>
 
               <div
-                style={{
-                  marginLeft: "1em",
-                }}
+                className="listhead"
               >
                 <p>
                   <b>Date</b>
                 </p>
               </div>
 
-              <div>
+              <div className="listhead">
                 <p>
-            <select
-              id="doctors"
+                  <select
+                    id="doctors"
                     onChange={this.handleOnChange}
                     className="transdoctor"
-            >
-              {DoctorList}
-            </select>
+                  >
+                    {DoctorList}
+                  </select>
                   {/* <b>Doctor Name</b> */}
                 </p>
               </div>
-              <div>
+              <div className="listhead">
                 <p>
                   <b>Patient Name</b>
                 </p>
               </div>
-              <div>
+              <div className="listhead">
                 <p>
                   <b>Amount</b>
                 </p>
               </div>
-              <div>
+              <div className="listhead">
                 <p>
                   <select
-              id="doctors"
+                    id="doctors"
                     onChange={this.handleStatus}
                     className="transdoctor"
-            >
+                  >
                     <option value="status">Status</option>
                     <option value="initiated">INITIATED</option>
                     <option value="paid">PAID</option>
-            </select>
+                  </select>
                 </p>
               </div>
             </div>
           </div>
-          {TransactionsList}          
+          {TransactionsList}
+          {posts.length >= 20 ? <div className="tranbottom">
+            <button onClick={() => this.LoadMoreTransaction()}> <i className="fas fa-download"></i></button>
+          </div> : null}
         </div>
       </div>
     );

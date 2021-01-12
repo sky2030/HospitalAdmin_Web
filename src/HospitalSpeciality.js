@@ -1,9 +1,7 @@
 import React from "react";
 import Navigation from "./Nav";
 import "./dashboard/dashboard.css";
-import addicon from "./img/add.png";
-//import Arthroscopy from "./img/Arthroscopy.jpg";
-//import Surgery_Dental from "./img/Surgery_Dental.jpg";
+import addicon from "./img/department.png";
 import { Link, Redirect } from "react-router-dom";
 import axios from "axios";
 //import Spinner from "./img/Spinner.gif";
@@ -18,7 +16,7 @@ const initialState = {
   departmentnameError: "",
   descriptionError: "",
   selectedFile: null,
-  submitted: false,
+  submitted: false
 };
 
 class HospitalSpeciality extends React.Component {
@@ -26,8 +24,16 @@ class HospitalSpeciality extends React.Component {
 
   constructor(props) {
     super(props);
+    const token = localStorage.getItem("token");
+
+    let loggedIn = true;
+    if (token == null) {
+      loggedIn = false;
+    }
+
     this.state = {
       posts: [],
+      loggedIn,
     };
   }
 
@@ -48,8 +54,23 @@ class HospitalSpeciality extends React.Component {
         this.setState({ posts: data });
         console.log("Data has been received!!" + data);
       })
-      .catch(() => {
-        alert("Error retrieving data!!");
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -72,13 +93,31 @@ class HospitalSpeciality extends React.Component {
         }
       })
       .catch((Error) => {
-        console.log(Error);
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
 
 
   };
 
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     if (localStorage.getItem("token") == null) {
       return <Redirect to="/" />;
     }

@@ -5,11 +5,11 @@ import "./dashboard/dashboard.css";
 //import Spinner from "./img/Spinner.gif";
 import Spinner from "./img/Spinnergrey.gif";
 //import Spinner from "./img/Magnify.gif";
-import addicon from "./img/add.png";
+import addicon from "./img/department.png";
 import { Link, Redirect } from "react-router-dom";
 import axios from "axios";
 
- const BASE = "https://stage.mconnecthealth.com";
+const BASE = "https://stage.mconnecthealth.com";
 
 
 class Alldepartment extends React.Component {
@@ -55,10 +55,28 @@ class Alldepartment extends React.Component {
 
       })
       .catch((Error) => {
-        alert(Error);
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     if (localStorage.getItem("token") == null) {
       return <Redirect to="/" />;
     }
@@ -67,33 +85,33 @@ class Alldepartment extends React.Component {
     const postList = posts.length ? (
       posts.map((post) => {
         return (
-          <div key={post._id}>
+          <Link to={"/Detaildepartment/" + post._id} key={post._id} className="linkdecoration" >
             <ul>
               <li>
-                <Link to={"/Detaildepartment/" + post._id}>
+                <div>
                   <img
                     src={post.picture === "" ? addicon : post.picture}
                     alt="Department"
                   />
                   {post.departmentname}
-                </Link>
+                </div>
               </li>
             </ul>
-          </div>
+          </Link>
         );
       })
     ) : (
-      <div
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "150px",
-          marginBottom: "100px",
-        }}
-      >
-        <img src={Spinner} alt="Loading" />
-      </div>
-    );
+        <div
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "150px",
+            marginBottom: "100px",
+          }}
+        >
+          <img src={Spinner} alt="Loading" />
+        </div>
+      );
 
     return (
       <div className="Appcontainer">

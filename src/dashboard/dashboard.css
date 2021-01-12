@@ -4,6 +4,37 @@
   font-family: "Roboto", sans-serif;
   box-sizing: border-box;
 }
+.linkdecoration {
+  text-decoration: none;
+  color: white;
+}
+.tranbottom {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+.tranbottom button {
+  width: 5em;
+  height: 2.5em;
+  margin: 1em;
+  border-radius: 0.5em;
+  color: white;
+  border-color: white;
+  background-color: rgb(6, 105, 185);
+}
+
+.listhead {
+  color: #0669b9;
+  font-weight: bold;
+}
+.list {
+  display: "flex";
+  flex-wrap: wrap;
+}
+
+.cancelbtn {
+  margin-right: "2em";
+}
 img.vert-move {
   -webkit-animation: mover 1s infinite alternate;
   animation: mover 1s infinite alternate;
@@ -84,7 +115,7 @@ img.vert-move {
 }
 
 .col4 {
-  width: 25em;
+  width: 35vw;
   background: rgb(238, 238, 238);
   background: radial-gradient(
     circle,
@@ -110,11 +141,6 @@ img.vert-move {
   font-size: 17px;
 }
 
-.contact-banner {
-  /* width: 45%; */
-  display: flex;
-  height: 45vh;
-}
 .imgclassName {
   /* height: 40vh; */
   width: 25vw;
@@ -130,11 +156,6 @@ img.vert-move {
   width: 2rem;
   height: 2rem;
   border-radius: 1rem;
-}
-.headeralign {
-  display: flex;
-  flex-direction: row;
-  margin-top: 1.5rem;
 }
 .imgdetail {
   width: 30vw;
@@ -246,21 +267,17 @@ ul.dlist li {
 }
 
 .dashboard_wrap {
-  width: 90%;
-  margin: 10px auto;
+  width: 90vw;
+  margin: 5px auto;
   /* flex-direction: row;
     display: flex; */
 }
 .dashboard_wrap2 {
-  width: 80%;
-  margin: 10px auto;
-  margin-top: 2rem;
+  width: 80vw;
+  margin: 15px auto;
   display: flex;
-  flex-direction: row;
-  flex-flow: wrap;
-  /* flex-direction: row;
-    display: flex; */
 }
+
 .imgclassName {
   /* height: 25vh; */
   width: 40vw;
@@ -326,7 +343,7 @@ footer p {
   margin: 5px;
 }
 footer {
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #000;
   border-bottom: 1px solid #ccc;
   margin-top: 20px;
   position: fixed;
@@ -334,27 +351,27 @@ footer {
   width: 100%;
   color: #fff;
   background-color: #000;
-  z-index: -1;
+  z-index: 100;
 }
 .box-shad {
   box-shadow: 1px 0px 4px #999;
   border: 1px solid #999;
 }
 header {
+  display: flex;
+  overflow: hidden;
   margin-top: 0px;
   box-shadow: 0px 2px 2px #ccc;
-  /* position: absolute; */
-  /* top: 0; */
-  width: 100%;
-  padding: 0;
   background-color: #fff;
-  height: 55px;
 }
 header ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
   float: right;
+}
+header #myNav {
+  display: inline-block;
 }
 header ul li {
   display: inline;
@@ -366,24 +383,28 @@ header ul li a {
   text-decoration: none;
   font-size: 13px;
 }
+header ul li:hover {
+  background-color: #577ad8;
+}
+header ul li a:hover {
+  color: white;
+}
+header ul li a i:hover {
+  color: white;
+}
 .container {
   margin: 0 auto;
   width: 80%;
 }
 .logo img {
-  width: 150px;
+  width: 10vw;
 }
 .logo {
   float: left;
-  width: 180px;
+  width: 10vw;
   text-align: left;
 }
-header ul li:last-child {
-  float: right;
-  text-align: right;
-  line-height: 28px;
-  padding-right: 0px;
-}
+
 header ul li a i {
   padding-right: 7px;
   font-size: 16px;
@@ -579,7 +600,7 @@ form {
 .alldept ul li {
   padding: 15px;
   text-align: left;
-  background-color: rgba(40, 110, 167, 0.8);
+  background-color: rgb(6, 105, 185);
   margin: 10px;
   border-radius: 4px;
   font-size: 16px;
@@ -641,7 +662,7 @@ h3 {
   color: #fff;
   text-decoration: none;
   font-size: 15px;
-  background-color: rgb(46 82 147);
+  background-color: rgb(6, 105, 185);
   padding: 10px 15px;
   border-radius: 25px;
 }
@@ -698,12 +719,12 @@ h3 {
   text-align: left;
 }
 .doctorpic img {
-  width: 100%;
+  width: 7vw;
+  height: 15vh;
   float: left;
+  box-shadow: 2px -2px 3px #999;
 }
 .doctorpic {
-  float: left;
-  width: 25%;
   margin-left: 1em;
   margin-right: 1em;
 }
@@ -711,6 +732,8 @@ h3 {
   float: left;
   padding: 0px 10px;
   width: 63%;
+  align-content: center;
+  justify-items: center;
 }
 .doctordetails i {
   font-size: 10px;
@@ -750,12 +773,17 @@ h3 {
   text-align: left;
   border-radius: 10px;
 }
+
 .banner-text {
-  position: relative;
-  width: 42%;
-  display: flex;
+  width: 35vw;
   height: 50vh;
-  /* margin-top: 1rem; */
+  margin-top: 2em;
+  display: flex;
+}
+.banner-text img {
+  width: 35vw;
+  border-radius: 1em;
+  box-shadow: 2px -2px 3px #999;
 }
 .col5 p {
   line-height: 25px;
@@ -785,9 +813,9 @@ h3 {
   border-radius: 5px;
 }
 .alltransation > div {
-  width: 100%;
+  width: 20vw;
   font-size: 14px;
-  line-height: 22px;
+  line-height: 4vh;
 }
 .maintrans h3 {
   font-size: 16px;
@@ -797,6 +825,7 @@ h3 {
   color: #0669b9;
 }
 .transdoctor {
+  width: 8vw;
   color: #0669b9;
   font-weight: bold;
   border-width: 0px;
@@ -873,8 +902,26 @@ section.login form {
   .col3 {
     width: 100%;
   }
+  .col5 {
+    width: 40vh;
+  }
+  .contact-banner {
+    margin-top: 5em;
+  }
+
+  .contact-banner img {
+    width: 40vw;
+    border-radius: 1em;
+  }
+  .imagesize {
+    width: 3rem;
+    height: 4rem;
+    border-radius: 0.5rem;
+    margin-top: 2rem;
+  }
   .dashboard_wrap {
     width: 94%;
+    z-index: -1;
   }
   section.login,
   section.login form {
@@ -883,8 +930,10 @@ section.login form {
   .flex-container .col {
     flex: 100%;
   }
-  .dashboard_wrap {
-    z-index: -1;
+  .doctorpic img {
+    width: 18vw;
+    height: 15vh;
+    float: left;
   }
   /* header{
 	  z-index:1;
@@ -897,13 +946,209 @@ section.login form {
   .alldept,
   .detailsdept {
     width: 96%;
-    margin-top: 15px;
+  }
+  .listhead {
+    word-wrap: break-word;
+    margin-right: 5px;
+  }
+  .list {
+    word-wrap: break-word;
+  }
+
+  .dashboard_wrap2 {
+    width: 80vw;
+    margin: 0px auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .logo img {
+    width: 40vw;
+    height: 10vh;
+  }
+  .logo {
+    float: left;
+    width: 40vw;
+    height: 10vh;
+    margin: 0px 8em;
+    text-align: left;
   }
   form,
   .scrolldiv {
     height: auto;
   }
+
   /* footer{ */
   /* position:inherit; */
   /* } */
+}
+header .icon {
+  width: 45px;
+  background-color: rgba(22, 115, 190, 0.8);
+  display: none;
+  position: absolute;
+  right: 0px;
+  font-size: 35px;
+  top: 0px;
+  color: white;
+}
+
+@media only screen and (max-width: 420px) {
+  .dashboard_maincontent {
+    display: flex;
+    flex-direction: column;
+  }
+  .container {
+    width: 100%;
+  }
+  .logo img {
+    width: 40vw;
+    height: 10vh;
+  }
+  .logo {
+    float: left;
+    width: 40vw;
+    height: 10vh;
+    margin: 0px 8em;
+    text-align: left;
+  }
+  .pb15 {
+    margin-top: 1em;
+  }
+  .alltransation {
+    border: 1px solid blue;
+    display: flex;
+    background-color: #ffff;
+    margin: 4px;
+    border-radius: 10px;
+    box-shadow: 5px 2px 6px #ccc;
+  }
+
+  .dashboard_maincontent img {
+    width: 95vw;
+    height: 30vh;
+    background-size: cover;
+  }
+  .dashboard_icons {
+    position: absolute;
+    left: 15px;
+    top: 250px;
+    width: 100%;
+  }
+
+  .logo img {
+    width: 40vw;
+    height: 10vh;
+  }
+  .logo {
+    float: left;
+    width: 40vw;
+    height: 10vh;
+    margin: 0px 8em;
+    text-align: left;
+  }
+  .alltransation > div {
+    font-size: 11px;
+  }
+
+  /* .headeralign {
+    display: flex;
+    flex-direction: column;
+  } */
+  .transactioncard h2 {
+    background-color: rgb(46 82 147);
+    color: #fff;
+    font-size: 20px;
+    padding: 5px;
+    text-align: center;
+    margin-top: 1em;
+  }
+  .banner-text {
+    margin-top: 1em;
+    width: 80vw;
+    display: flex;
+    height: 30vh;
+  }
+  .banner-text img {
+    width: 80vw;
+    height: 30vh;
+  }
+
+  .doctorpic img {
+    width: 30vw;
+    height: 15vh;
+    float: left;
+    box-shadow: 2px -2px 3px #999;
+  }
+  .ChooseDoctor {
+    margin-top: 7em;
+    width: 30vw;
+  }
+  header {
+    display: flex;
+    box-shadow: 0px 2px 2px #ccc;
+    background-color: #fff;
+  }
+  header #myNav {
+    display: none;
+  }
+  header .icon {
+    width: 50px;
+    background-color: rgba(22, 115, 190, 0.8);
+    display: block;
+    position: absolute;
+    right: 7px;
+    font-size: 35px;
+    top: 2px;
+    color: white;
+  }
+
+  header ul li {
+    display: flex;
+    padding: 5px;
+    width: 100vw;
+    line-height: 20px;
+    justify-content: center;
+    background-color: rgba(22, 115, 190, 0.8);
+    border-bottom: 1px solid white;
+  }
+
+  header ul li a {
+    font-size: 20px;
+    color: white;
+  }
+
+  header ul li a i {
+    font-size: 15px;
+    color: white;
+  }
+  .hospitalimg img {
+    width: 35vw;
+    height: 15vh;
+  }
+
+  .contact-banner {
+    margin-top: 5em;
+  }
+
+  .contact-banner img {
+    width: 40vw;
+    border-radius: 1em;
+  }
+  .listhead {
+    word-wrap: break-word;
+    margin-right: 5px;
+  }
+  .list {
+    word-wrap: break-word;
+  }
+
+  .col4 {
+    width: 70vw;
+    margin-top: 1px;
+    height: 40vh;
+  }
+
+  .add_departmet {
+    margin-bottom: 2em;
+  }
 }

@@ -6,18 +6,6 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { Redirect } from "react-router-dom";
 
-// const initialState = {
-// 	hospitalcode:'',
-// 	deptcode:'',
-// 	departmentname:'',
-// 	description:'',
-// 	picture:'',
-// 	nameError: "",
-// 	emailError: "",
-// 	phoneError: "",
-// 	selectedFile:null,
-// 	submitted:false
-//   };
 
 class Editdepartment extends React.Component {
   constructor(props) {
@@ -52,28 +40,49 @@ class Editdepartment extends React.Component {
     axios
       .get(
         "https://stage.mconnecthealth.com/v1/hospital/departments/" +
-          this.props.match.params.id,
+        this.props.match.params.id,
         {
           headers: {
             Authorization: localStorage.getItem("token"),
           },
         }
       )
-      // axios.get('https://stage.mconnecthealth.com/saket_Hospital')
       .then((response) => {
         console.log(response);
-        const data = response.data.data;
+        if (response.data.code === 200) {
+          const data = response.data.data;
 
-        this.setState({
-          departmentname: data.departmentname,
-          description: data.description,
-          picture: data.picture,
-          id: data._id,
-        });
-        console.log("Data has been received!!");
+          this.setState({
+            departmentname: data.departmentname,
+            description: data.description,
+            picture: data.picture,
+            id: data._id,
+          });
+          console.log("Data has been received!!");
+        } else {
+          alert(
+            response.data.message
+          );
+
+        }
       })
-      .catch(() => {
-        alert("Error retrieving data!!");
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -97,7 +106,7 @@ class Editdepartment extends React.Component {
     return true;
   };
 
-   UpdateDepartment = (event) => {
+  UpdateDepartment = (event) => {
     event.preventDefault();
     const {
       departmentname,
@@ -167,8 +176,23 @@ class Editdepartment extends React.Component {
             alert(`Failure: Try again Updating ${this.state.departmentname} `);
           }
         })
-        .catch(() => {
-          console.log("internal server error");
+        .catch((Error) => {
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 403) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+            this.setState({
+              loggedIn: false
+            })
+
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
   };
@@ -178,7 +202,7 @@ class Editdepartment extends React.Component {
     this.setState({ [name]: value });
   };
 
-    onFileHandler = async (event) => {
+  onFileHandler = async (event) => {
     await this.setState({
       picture: event.target.files[0],
       loaded: 0,
@@ -247,8 +271,23 @@ class Editdepartment extends React.Component {
         });
         console.log(this.state.picture);
       })
-      .catch((err) => {
-        console.log("error while uploading" + err);
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
       });
   };
 
@@ -260,6 +299,9 @@ class Editdepartment extends React.Component {
     });
   };
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     const { departmentname, description } = this.state;
     if (this.state.submitted) {
       return <Redirect to="/Alldepartment" />;
@@ -333,11 +375,6 @@ class Editdepartment extends React.Component {
                 <i class="fas fa-save"></i>Update Details
               </button>
             </div>
-            <img
-              alt="Hospital"
-              src={this.state.picture}
-              style={{ width: "90%" }}
-            />
           </form>
         </div>
       </div>

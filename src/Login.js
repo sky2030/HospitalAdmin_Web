@@ -3,7 +3,7 @@ import React from "react";
 import "./dashboard/dashboard.css";
 import axios from "axios";
 import logo from "./img/logo.png";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 class Login extends React.Component {
   constructor(props) {
@@ -15,10 +15,13 @@ class Login extends React.Component {
       LoggedIn = false;
     }
     this.state = {
+      hidden: true,
       email: "",
       password: "",
       token: "",
       LoggedIn,
+      emailError: "",
+      passwordError: ""
     };
   }
 
@@ -78,31 +81,32 @@ class Login extends React.Component {
         }
         )
         .catch((Error) => {
-          alert(Error + " Server Not Responding")
-          console.log("internal server error");
+          if (Error.message === "Network Error") {
+            alert("Please Check your Internet Connection")
+            console.log(Error.message)
+            return;
+          }
+          if (Error.response.data.code === 401) {
+            alert(Error.response.data.message)
+            console.log(JSON.stringify("Error 401: " + Error.response.data.message))
+          }
+          else {
+            alert("Something Went Wrong")
+          }
         });
     }
 
-    // this.setState({
-    //   token:localStorage.getItem("token")
-    // })
 
-    // if (this.state.token === '') {
-    //   return null
-    // }
-    // else {
-    //   this.setState({
-    //     LoggedIn: true
-    //   })
-    // }
-    // if(email ==="8882973229" && password ==="shiv"){
-    //   localStorage.setItem("token", "aaaefdgadftaerd")
-    //   this.setState({
-    //     LoggedIn: true
-    //   })
-    // }
   };
+
+  toggleShow = () => {
+    this.setState({ hidden: !this.state.hidden });
+  }
+
   render() {
+    if (this.state.loggedIn === false) {
+      return <Redirect to="/" />;
+    }
     if (this.state.token !== "") {
       return <Redirect to="/Dashboard" />;
     }
@@ -111,13 +115,11 @@ class Login extends React.Component {
       <section className="login">
         <img src={logo} alt="logo" />
         <h2>WELCOME TO VRCure!</h2>
-        <form autocomplete="off" onSubmit={this.submitForm}>
+        <form autocomplete="on" onSubmit={this.submitForm}>
           <div className="loginbox">
             <i className="fas fa-user"></i>
             <div>
-              <div style={{ fontSize: 12, color: "red" }}>
-                {this.state.emailError}
-              </div>
+
               <input
                 placeholder="Your User Name"
                 type="text"
@@ -127,29 +129,39 @@ class Login extends React.Component {
                 onChange={this.onChange}
               ></input>
             </div>
+            <div style={{ fontSize: 12, color: "red" }}>
+              {this.state.emailError}
+            </div>
           </div>
           <div className="loginbox">
             <i className="fas fa-lock"></i>
-            <div>
-              <div style={{ fontSize: 12, color: "red" }}>
-                {this.state.passwordError}
-              </div>
+
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
               <input
                 placeholder="Your Password"
-                type="password"
+                //type="password"
+                type={this.state.hidden ? 'password' : 'text'}
                 id="password"
                 name="password"
                 value={this.state.password}
                 onChange={this.onChange}
               ></input>
+              <p onClick={this.toggleShow}>
+                {this.state.hidden ? <i class="fas fa-eye-slash"></i> : <i class="fas fa-eye"></i>}
+              </p>
             </div>
-            <a href="confirm" className="forgotpass">
-              Forgot Password ?
+            <div style={{ fontSize: 12, color: "red" }}>
+              {this.state.passwordError}
+            </div>
+            {/* <Link to="/ForgetPassword">
+              <a href="confirm" className="forgotpass">
+                Forgot Password ?
             </a>
+            </Link> */}
           </div>
           <div>
             {/* <input type="submit" className="button" /> */}
-            <button type="submit">Login</button>
+            <button id="submit">Login</button>
           </div>
         </form>
       </section>

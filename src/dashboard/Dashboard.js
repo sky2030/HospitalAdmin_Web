@@ -47,15 +47,16 @@ class Dashboard extends React.Component {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/Myhospital">
-                    <i className="fas fa-hospital"></i>My Hospital
-                  </Link>
+                  <Link to="/HospitalSpeciality">
+                    <i className="fas fa-user-md"></i>Specialities
+              </Link>
                 </li>
                 <li>
                   <Link to="/Transactions">
                     <i className="fas fa-credit-card"></i>Transaction
                   </Link>
                 </li>
+
               </ul>
             </div>
           </div>

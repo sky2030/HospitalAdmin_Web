@@ -5,8 +5,22 @@
   box-sizing: border-box;
 }
 .linkdecoration {
+  display: flex;
   text-decoration: none;
   color: white;
+  justify-content: space-around;
+}
+.itemslist button {
+  font-size: 15px;
+  color: white;
+  background-color: #046b15;
+  padding: 5px;
+}
+
+.itemslist {
+  padding-left: 10px;
+  padding-right: 5px;
+  color: #000;
 }
 .tranbottom {
   display: flex;
@@ -14,7 +28,7 @@
   align-items: center;
 }
 .tranbottom button {
-  width: 5em;
+  width: 8em;
   height: 2.5em;
   margin: 1em;
   border-radius: 0.5em;
@@ -22,7 +36,14 @@
   border-color: white;
   background-color: rgb(6, 105, 185);
 }
-
+.ApprovePanel {
+  display: flex;
+}
+.ApprovePanel button {
+  font-size: 20px;
+  background-color: #046b15;
+  border-width: 0px;
+}
 .listhead {
   color: #0669b9;
   font-weight: bold;
@@ -416,6 +437,52 @@ header ul li a i {
 .right {
   float: right;
 }
+
+.Approval {
+  width: 45vw;
+  margin: 10px auto 60px auto;
+  background: rgb(238, 238, 238);
+  background: radial-gradient(
+    circle,
+    rgba(238, 238, 238, 1) 0%,
+    rgba(215, 230, 246, 1) 100%
+  );
+  text-align: center;
+}
+.Approval h2 {
+  background-color: rgb(46 82 147);
+  color: #fff;
+  font-size: 20px;
+  padding: 5px;
+  text-align: center;
+}
+
+.Approval ul {
+  list-style-type: none;
+  margin: 0 auto;
+  padding: 0;
+  width: 70%;
+}
+.Approval ul li {
+  padding: 10px;
+  text-align: left;
+  background-color: rgb(46 82 147);
+  margin: 2px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  width: 100%;
+}
+.Approval ul li p {
+  color: rgb(214, 212, 214);
+  font-size: 14px;
+  font-weight: 400;
+}
+.Approval ul li a {
+  text-decoration: none;
+  color: #fff;
+}
+
 .adddept,
 .alldept,
 .detailsdept {
@@ -1150,5 +1217,14 @@ header .icon {
 
   .add_departmet {
     margin-bottom: 2em;
+  }
+  .Approval {
+    width: 90vw;
+  }
+  .Approval ul {
+    width: 90%;
+  }
+  .Approval ul li p {
+    color: rgb(214, 212, 214);
   }
 }

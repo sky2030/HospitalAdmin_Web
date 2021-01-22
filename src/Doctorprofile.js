@@ -2,6 +2,7 @@ import React from "react";
 import Navigation from "./Nav";
 //import ReactDOM from 'react-dom';
 import "./dashboard/dashboard.css";
+import docicon from "./img/doctor-icon.jpg";
 //import nerology from './img/Nerology.png';
 //import dentist1 from './img/dentist1.png';
 //import cardio from './img/cardio.png';
@@ -116,7 +117,46 @@ class Doctorprofile extends React.Component {
           alert("Something Went Wrong")
         }
       });
-    //}
+  };
+  ApproveDoctor = () => {
+    let URL = `https://stage.mconnecthealth.com/v1/hospital/doctors/${this.props.match.params.id}/approved`;
+    console.log(URL)
+    axios({
+      url: URL,
+      method: "put",
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+    })
+      .then((data) => {
+        console.log(data.data.code);
+        if (data.data.code === 200) {
+          this.setState({
+            submitted: true,
+          });
+          alert(data.data.message);
+        } else {
+          alert(data.data.message);
+        }
+      })
+      .catch((Error) => {
+        if (Error.message === "Network Error") {
+          alert("Please Check your Internet Connection")
+          console.log(Error.message)
+          return;
+        }
+        if (Error.response.data.code === 403) {
+          alert(Error.response.data.message)
+          console.log(JSON.stringify("Error 403: " + Error.response.data.message))
+          this.setState({
+            loggedIn: false
+          })
+
+        }
+        else {
+          alert("Something Went Wrong")
+        }
+      });
   };
   render() {
     const { post } = this.state;
@@ -139,12 +179,22 @@ class Doctorprofile extends React.Component {
           </div>
           <h2>Doctor Profile</h2>
           <div className="scrolldiv">
-            <img src={post.picture} alt="Neorology" />
+            <img
+              src={post.picture === "" || !post.picture ? docicon : post.picture}
+              alt="doctors"
+            />
             <h3>
               Dr. {post.first_name} {post.last_name}
             </h3>
             <p>{post.designation}</p>
+            <p>{post.registration_no}</p>
+            {post.is_approved === false ? <button onClick={this.ApproveDoctor} style={{ backgroundColor: "green" }}>
+              <i class="fas fa-user-check"></i> Approve{" "}
+            </button>
+              : null}
+
             <ul className="dlist">
+
               <li>
                 <i className="fas fa-user"></i>
                 {post.department}
@@ -174,6 +224,7 @@ class Doctorprofile extends React.Component {
                 {post.dob}
               </li>
             </ul>
+
             <Link to={"/Updateprofile/" + post._id}>
               <button>
                 <i className="far fa-edit"></i> Update Details{" "}
@@ -192,6 +243,7 @@ class Doctorprofile extends React.Component {
                 <i className="fas fa-hospital"></i>Manage Slots{" "}
               </button>{" "}
             </Link>
+
           </div>
         </div>
       </div>

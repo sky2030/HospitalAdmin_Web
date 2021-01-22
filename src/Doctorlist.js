@@ -91,7 +91,7 @@ class Doctorlist extends React.Component {
             }}>
               <div className="doctorpic">
                 <img
-                  src={post.picture === "" ? docicon : post.picture}
+                  src={post.picture === "" || !post.picture ? docicon : post.picture}
                   alt="doctors"
                 />
               </div>
@@ -108,6 +108,12 @@ class Doctorlist extends React.Component {
                 </p>
                 <p>Rs. : {post.consultation}</p>
                 <p>{post.designation}</p>
+                {post.is_approved === false ?
+                  <div className="ApprovePanel">
+                    <p style={{ color: 'red', fontSize: "12px" }}> <b>Approval Pending</b>, Approve this Doctor if Belongs to Your Hospital</p>
+
+                  </div>
+                  : null}
               </div>
             </div>
 

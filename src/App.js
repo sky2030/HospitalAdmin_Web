@@ -23,6 +23,7 @@ import AddSpecialities from "./AddSpecialities";
 import Speciality from "./Speciality";
 import ForgetPassword from './ForgetPassword'
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import ApprovalList from './ApprovalList'
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
 
           <Route path="/HospitalSpeciality" component={HospitalSpeciality} />
           <Route path="/AddSpecialities" component={AddSpecialities} />
+          <Route path="/ApproveDoctors" component={ApprovalList} />
         </Switch>
       </div>
       <Footer />

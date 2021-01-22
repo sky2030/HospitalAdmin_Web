@@ -648,7 +648,7 @@ class UpdateDoctorProfile extends React.Component {
               </button>
             </div>
             <img
-              alt="Hospital"
+              alt="Doctor"
               src={this.state.picture}
               style={{ width: "50%" }}
             />

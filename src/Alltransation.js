@@ -329,7 +329,7 @@ class Alltransation extends React.Component {
           </div>
           {TransactionsList}
           {posts.length >= 20 ? <div className="tranbottom">
-            <button onClick={() => this.LoadMoreTransaction()}> <i className="fas fa-download"></i></button>
+            <button onClick={() => this.LoadMoreTransaction()}> <i className="fas fa-download"></i> Load More </button>
           </div> : null}
         </div>
       </div>

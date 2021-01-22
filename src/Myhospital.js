@@ -71,7 +71,6 @@ class Myhospital extends React.Component {
       <div className="Appcontainer">
         <Navigation />
         <div className="dashboard_wrap2">
-
           <div className="banner-text">
             <img
               src={hospitals.picture}

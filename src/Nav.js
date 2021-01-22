@@ -48,8 +48,8 @@ class Nav extends React.Component {
               </Link>
             </li>
             <li>
-              <Link to="/HospitalSpeciality">
-                <i className="fas fa-user-md"></i>Specialities
+              <Link to="/ApproveDoctors">
+                <i className="fas fa-user-md"></i>Approvals
               </Link>
             </li>
             <li>
